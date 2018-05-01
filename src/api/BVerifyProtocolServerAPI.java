@@ -2,7 +2,6 @@ package api;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * The API exposed by the b_verify server to the b_verify clients
@@ -12,42 +11,36 @@ import java.util.List;
  */
 public interface BVerifyProtocolServerAPI extends Remote {
 	
-	/*
-	 * These methods are the b_verify server API
+	/**
+	 * Invoked by the warehouse on the server to 
+	 * start issuing a receipt
+	 * @param request - should be an IssueReceiptRequest
+	 * (see format in bverifyprotocolapi.proto)
+	 * @param signature - the warehouse should sign the 
+	 * new root and include its signature (see format
+	 * in bverifyprotocolapi.proto)
+	 * @return
 	 */
-	
+	public void issueReceipt(byte[] request, byte[] signature) throws RemoteException;
 	
 	/**
-	 * Invoked b
-	 * @param adsUpdates
-	 * @return
+	 * Invoked by a client to get the authentication proof
+	 * from a commitment to the root of a client ads
+	 * @param adsId - the Id of the ADS
+	 * @param commitmentNumber - the commitmentNumber
+	 * @return an AuthProof (see format in the bverifyprotocolapi.proto)
+	 * this is just a merkle proof.
 	 * @throws RemoteException
 	 */
-	public boolean submitUpdates(byte[] adsUpdates) throws RemoteException;
+	public byte[] getAuthPath(byte[] adsId, int commitmentNumber)  throws RemoteException;
+	
 	
 	/**
-	 * Invoked by a client remotely on the server to request
-	 * the server to send (client specific) updates. This method
-	 * returns a serialized set of updates
-	 * @param updateRequest - a serialized request for updates 
-	 * (see GetUpdatesRequest in bverifyprotocol.proto)
-	 * @return a serialized response containing updates 
-	 * (see Updates in bverifyprotocol.proto)
+	 * Invoked by a client to get the specified ads 
+	 * @param adsId
+	 * @return
 	 */
-	public byte[] getUpdates(byte[] updateRequest)  throws RemoteException;
-	
-	
-	/*
-	 * These methods are not part of the secure API
-	 * and are used ONLy for testing and demo purposes.
-	 */
-	
-	public byte[] getAuthenticationObjectNoProof(byte[] adsKey) throws RemoteException;
-	
-	public byte[] getAuthenticationProof(List<byte[]> adsKeys) throws RemoteException;
-	
-	public byte[] getCommitment(int commitmentNumber) throws RemoteException;
-
+	public byte[] getADS(byte[] adsId);
 	
 	
 	

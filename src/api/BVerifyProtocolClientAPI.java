@@ -11,21 +11,14 @@ import java.rmi.RemoteException;
  */
 public interface BVerifyProtocolClientAPI extends Remote {
 	
-	/*
-	 * These methods are the b_verify client API
+	/**
+	 * Invoked by the server on the client to approve a deposit
+	 * 
+	 * @param request - should be an IssueReceiptRequest message
+	 * (see format in bverifyprotocolapi.proto)
+	 * @return a signature over the new root! - should be a Signature message
+	 * (see format in bverifyprotocolapi.proto)
 	 */
-	
-	public byte[] approveRequest(byte[] requestMessage) throws RemoteException;
-	
-	
-	/*
-	 * These methods are not part of the secure API
-	 * 	and are used only for benchmarking and testing. 
-	 */
-	public void recieveNewCommitment(byte[] commitment) throws RemoteException;
-	
-	public boolean approveEchoBenchmark(boolean response) throws RemoteException;
-	
-	public byte[] approveSigEchoBenchmark(byte[] messageToSign) throws RemoteException;
+	public byte[] approveDeposit(byte[] request) throws RemoteException;
 	
 }
