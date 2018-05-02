@@ -1,127 +1,50 @@
 package server;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
-
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import api.BVerifyProtocolServerAPI;
-import crpyto.CryptographicDigest;
-import crpyto.CryptographicSignature;
-import pki.Account;
-import serialization.generated.BVerifyAPIMessageSerialization.ADSModificationRequest;
-import serialization.generated.BVerifyAPIMessageSerialization.GetUpdatesRequest;
-import serialization.generated.BVerifyAPIMessageSerialization.RequestADSUpdates;
+import serialization.generated.BVerifyAPIMessageSerialization.ADSData;
+import serialization.generated.BVerifyAPIMessageSerialization.IssueReceiptRequest;
+import serialization.generated.BVerifyAPIMessageSerialization.Receipt;
 
 public class BVerifyServerRequestVerifier implements BVerifyProtocolServerAPI {
 	
 	// shared data
 	private final ADSManager adsManager;
-	private BlockingQueue<Update> updatesToBeCommited;
+	private BlockingQueue<IssueReceiptRequest> requests;
 
 	public BVerifyServerRequestVerifier( 
-			BlockingQueue<Update> update, ADSManager ads) {
+			BlockingQueue<IssueReceiptRequest> requests, ADSManager ads) {
 		this.adsManager = ads;
-		this.updatesToBeCommited = update;
+		this.requests = requests;
 	}
 	
 	@Override
-	public boolean submitUpdates(byte[] adsUpdates) {
-		try {
-			// #1 parse the message
-			RequestADSUpdates request = RequestADSUpdates.parseFrom(adsUpdates);
-						
-			// #2 go through all the ADS modifications
-			//		to find all parties who need to have signed the 
-			//		request
-			List<Account> needToSign = new ArrayList<>();
-			Set<ADSModification> modifications = new HashSet<>();
-			for(ADSModificationRequest adsModifcation : request.getModificationsList()) {
-				byte[] adsKey = adsModifcation.getAdsId().toByteArray();
-				byte[] adsValue = adsModifcation.getNewValue().toByteArray();
-				Set<Account> owners = this.adsManager.getADSOwners(adsKey);
-				needToSign.addAll(owners);
-				// # 3 create the actual ADS modifications
-				ADSModification adsModification = new ADSModification(adsKey, adsValue);
-				modifications.add(adsModification);
-			}
-			// canonically sort accounts
-			Collections.sort(needToSign);
-			
-			// #4 verify the signatures
-			List<byte[]> signatures = 
-					request.getSignaturesList().stream()
-					.map(x -> x.getSignature().toByteArray())
-					.collect(Collectors.toList());
-			if(needToSign.size() != signatures.size()) {
-				return false;
-			}
-			for(int i = 0; i < signatures.size(); i++) {
-				Account a = needToSign.get(i);
-				byte[] sig = signatures.get(i);
-				// witness for now is just the first modification
-				byte[] witness = CryptographicDigest.hash(request.getModifications(0).toByteArray());
-				boolean signed = CryptographicSignature.verify(witness, sig, a.getPublicKey());
-				if(!signed) {
-					return false;
-				}
-			}
-			
-			// #5 if all signatures verify create the update and
-			// 	 schedule the update to be committed
-			Update update = new Update(modifications, request);
-			if(this.updatesToBeCommited.remainingCapacity() == 0) {
-				return false;
-			}else {
-				this.updatesToBeCommited.add(update);
-				return true;
-			}
-			
-		} 	catch (InvalidProtocolBufferException e) {
+	public void issueReceipt(byte[] request) throws RemoteException {
+		try{
+			IssueReceiptRequest requestMsg = IssueReceiptRequest.parseFrom(request);
+			this.requests.add(requestMsg);
+		}catch(Exception e) {
 			e.printStackTrace();
-			return false;
 		}
 	}
 
 	@Override
-	public byte[] getUpdates(byte[] updateRequest) throws RemoteException {
-		try {
-			GetUpdatesRequest request = GetUpdatesRequest.parseFrom(updateRequest);
-			// parse the keys
-			List<byte[]> keys = new ArrayList<>();
-			List<ByteString> keyByteStrings = request.getKeysList();
-			for (ByteString key : keyByteStrings) {
-				keys.add(key.toByteArray());
-			}
-			int from = request.getFromCommitNumber();
-			byte[] updates = this.adsManager.getUpdate(from, keys).toByteArray();
-			return updates;
-		} catch (InvalidProtocolBufferException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public byte[] getAuthPath(List<byte[]> adsIds, int commitmentNumber) throws RemoteException {
+		return this.adsManager.getProof(adsIds, commitmentNumber).toByteArray();
 	}
 
 	@Override
-	public byte[] getAuthenticationObjectNoProof(byte[] adsKey) throws RemoteException {
-		return this.adsManager.getValue(adsKey);
-	}
-
-	@Override
-	public byte[] getAuthenticationProof(List<byte[]> adsKeys) throws RemoteException {
-		return this.adsManager.getProof(adsKeys).toByteArray();
-	}
-
-	@Override
-	public byte[] getCommitment(int commitmentNumber) throws RemoteException {
-		return this.adsManager.getCommitment(commitmentNumber);
+	public byte[] getReceipts(byte[] adsId) {
+		Set<Receipt> adsData = this.adsManager.getADSData(adsId);
+		ADSData response = ADSData.newBuilder()
+				.addAllReceipts(adsData)
+				.setCommitmentNumber(this.adsManager.getCurrentCommitmentNumber())
+				.build();
+		return response.toByteArray();
 	}
 
 }

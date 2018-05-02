@@ -1,9 +1,7 @@
 package server;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,13 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import crpyto.CryptographicUtils;
+import demo.BootstrapMockSetup;
 import mpt.core.InvalidSerializationException;
-import mpt.dictionary.MPTDictionaryDelta;
+import mpt.core.Utils;
 import mpt.dictionary.MPTDictionaryFull;
 import mpt.dictionary.MPTDictionaryPartial;
+import mpt.set.AuthenticatedSetServer;
+import mpt.set.MPTSetFull;
 import pki.Account;
 import pki.PKIDirectory;
-import serialization.generated.BVerifyAPIMessageSerialization.Updates;
+import serialization.generated.BVerifyAPIMessageSerialization.Receipt;
 import serialization.generated.MptSerialization.MerklePrefixTrie;
 
 
@@ -32,7 +34,11 @@ public class ADSManager {
 	// Java NOTE: cannot use byte[] as a key since
 	//				implements referential equality so
 	//				instead we wrap it with a string
-	private final Map<String, Set<Account>> adsKeyToOwners;
+	private final Map<String, AuthenticatedSetServer> adsKeyToADS;
+	private final Map<String, Set<Receipt>> adsKeyToADSData;
+	private final Map<String, Set<Account>> adsKeyToADSOwners;
+	private final Map<String, byte[]> adsKeyStringToBytes;
+	
 
 	// current server authentication 
 	// information. 
@@ -40,114 +46,121 @@ public class ADSManager {
 	// (also referred to as ads id) to the 
 	// root value of that ADS.
 	private MPTDictionaryFull serverAuthADS;
-
-	// we store the previous commitments
-	// normall these would be broadcast in
-	// the Bitcoin blockchain
-	private List<byte[]> commitments;
-	
-	// we also store a log of changes to generate
-	// proofs of updates
-	// TODO: consider if we want to store these
-	// or some subset of them on disk
-	private List<MPTDictionaryDelta> deltas;
-	
+	private List<MPTDictionaryFull> serverAuthADSVersions;	
 	
 	
 	public ADSManager(String base, PKIDirectory pki) {
 		this.base = base;
-		this.deltas = new ArrayList<>();
-		this.commitments = new ArrayList<>();
-		File f = new File(base + "server-ads/starting-ads");
+		this.serverAuthADSVersions = new ArrayList<>();
 		
 		// First all the ADS Keys and 
 		// determine which clients care about 
 		// each ADS
-		this.adsKeyToOwners = new HashMap<>();
+		this.adsKeyToADSOwners = new HashMap<>();
+		this.adsKeyStringToBytes = new HashMap<>();
 		Set<Account> accounts = pki.getAllAccounts();
 		for(Account a : accounts) {
 			Set<byte[]> adsKeys = a.getADSKeys();
 			for(byte[] adsKey : adsKeys) {
-				String adsKeyString = new String(adsKey);
-				Set<Account> accs = this.adsKeyToOwners.get(adsKeyString);
+				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
+				this.adsKeyStringToBytes.put(adsKeyString, adsKey);
+				Set<Account> accs = this.adsKeyToADSOwners.get(adsKeyString);
 				if(accs == null) {
 					accs = new HashSet<>();
 				}
 				accs.add(a);
-				this.adsKeyToOwners.put(adsKeyString, accs);
+				this.adsKeyToADSOwners.put(adsKeyString, accs);
 			}
 		}
 		
-		try {
-			// Second load the Authentication ADS from disk
-			FileInputStream fis = new FileInputStream(f);
-			byte[] encodedAds = new byte[(int) f.length()];
-			fis.read(encodedAds);
-			fis.close();
-			this.serverAuthADS = MPTDictionaryFull.deserialize(encodedAds);
-			byte[] initialCommitment = this.serverAuthADS.commitment();
-			this.commitments.add(initialCommitment);
-		} catch (InvalidSerializationException | IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("corrupted data");
+		// next load the actual receipt data
+		// and generate the ADSes
+		this.adsKeyToADSData = new HashMap<>();
+		this.adsKeyToADS = new HashMap<>();
+		this.serverAuthADS = new MPTDictionaryFull();
+		for(String adsKeyString : this.adsKeyToADSData.keySet()) {
+			Set<Receipt> receipts = BootstrapMockSetup.loadReceipts(base, adsKeyString);
+			MPTSetFull ads = new MPTSetFull();
+			for(Receipt r : receipts) {
+				byte[] witness = CryptographicUtils.witnessReceipt(r);
+				ads.insert(witness);
+			}
+			this.adsKeyToADSData.put(adsKeyString, receipts);
+			this.adsKeyToADS.put(adsKeyString, ads);
+			this.serverAuthADS.insert(this.adsKeyStringToBytes.get(adsKeyString), ads.commitment());
 		}
+		
+		// finally add the ADS as the first version
+		
 		System.out.println("ADSManager Loaded!");	
 	}
 	
-	public Set<Account> getADSOwners(byte[] adsKey){
-		return this.adsKeyToOwners.get(new String(adsKey));
+	public synchronized AuthenticatedSetServer getADS(byte[] adsId) {
+		// serializes to bytes and deserializes
+		// to get a deep copy with no references
+		String adsKey = Utils.byteArrayAsHexString(adsId);
+		if(this.adsKeyToADS.containsKey(adsKey)){
+			byte[] toBytes = this.adsKeyToADS.get(adsKey).serialize().toByteArray();
+			try {
+				MPTSetFull copy = MPTSetFull.deserialize(toBytes);
+				return copy;
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		return null;
 	}
 	
-	public void update(byte[] adsKey, byte[] adsValue) {
-		this.serverAuthADS.insert(adsKey, adsValue);
+	public synchronized Set<Receipt> getADSData(byte[] adsId){
+		String adsKey = Utils.byteArrayAsHexString(adsId);
+		Set<Receipt> receipts = this.adsKeyToADSData.get(adsKey);
+		return new HashSet<Receipt>(receipts);
 	}
 	
-	public byte[] commit() {
-		// save delta
-		MPTDictionaryDelta delta = new MPTDictionaryDelta(this.serverAuthADS);
-		this.deltas.add(delta);
+	public synchronized void updateADS(byte[] adsKey, Set<Receipt> adsData, AuthenticatedSetServer ads) {
+		String adsKeyString = Utils.byteArrayAsHexString(adsKey);
+		this.adsKeyToADS.put(adsKeyString, ads);
+		this.adsKeyToADSData.put(adsKeyString, adsData);
+		this.serverAuthADS.insert(adsKey, ads.commitment());
+	}
+	
+	
+	public synchronized byte[] commit() {
+		// copy the auth ADS
+		MerklePrefixTrie asBytes = this.serverAuthADS.serialize();
+		MPTDictionaryFull copy;
+		try {
+			copy = MPTDictionaryFull.deserialize(asBytes);
+		} catch (InvalidSerializationException e) {
+			e.printStackTrace();
+			throw new RuntimeException("internal error");
+		}
 		// clear the changes
 		this.serverAuthADS.reset();
-		// calculate a new commitment 
-		byte[] commitment = this.serverAuthADS.commitment();
-		this.commitments.add(commitment);
-		return commitment;
+		return copy.commitment();
 	}
 
-	public byte[] getValue(byte[] key) {
-		return this.serverAuthADS.get(key);
-	}
-
-	public byte[] currentCommitment() {
-		return this.commitments.get(this.commitments.size());
+	public synchronized int getCurrentCommitmentNumber() {
+		return this.serverAuthADSVersions.size()-1;
 	}
 	
-	public byte[] getCommitment(int commitmentNumber) {
-		if(commitmentNumber < 0 || commitmentNumber >= this.commitments.size()) {
+	public synchronized byte[] getCommitment(int commitmentNumber) {
+		if(commitmentNumber < 0 || commitmentNumber >= this.serverAuthADSVersions.size()) {
 			return null;
 		}
-		return this.commitments.get(commitmentNumber);
+		return this.serverAuthADSVersions.get(commitmentNumber).commitment();
 	}
 
-	public MerklePrefixTrie getProof(List<byte[]> keys) {
-		MPTDictionaryPartial partial = new MPTDictionaryPartial(this.serverAuthADS, keys);
+	public synchronized MerklePrefixTrie getProof(List<byte[]> keys, int commitmentNumber) {
+		if(commitmentNumber < 0 || commitmentNumber >= this.serverAuthADSVersions.size()) {
+			return null;
+		}
+		MPTDictionaryFull full = this.serverAuthADSVersions.get(commitmentNumber);
+		MPTDictionaryPartial partial = new MPTDictionaryPartial(full, keys);
 		return partial.serialize();
 	}
 
-	public Updates getUpdate(int startingCommitNumber, List<byte[]> keyHashes) {
-		Updates.Builder updates = Updates.newBuilder();
-		// go through each commitment
-		for (int commitmentNumber = startingCommitNumber; commitmentNumber < this.deltas.size(); commitmentNumber++) {
-			// get the changes
-			MPTDictionaryDelta delta = this.deltas.get(commitmentNumber);
-			// and calculate the updates
-			MerklePrefixTrie update = delta.getUpdates(keyHashes);
-			updates.addUpdate(update);
-		}
-		return updates.build();
-	}
-
-	public void save() {
+	public synchronized void save() {
 		// TBD
 		byte[] asBytes = this.serverAuthADS.serialize().toByteArray();
 		try {

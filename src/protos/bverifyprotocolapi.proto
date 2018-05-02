@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package serialization;
+package serialization.generated;
 import "protos/mpt.proto";
 option java_outer_classname = "BVerifyAPIMessageSerialization";
 
@@ -37,6 +37,7 @@ message IssueReceiptRequest {
 	string issuer_id = 1;
 	string recepient_id = 2;
 	Receipt receipt = 3;
+	Signature signature = 4;
 }
 
 /**
@@ -45,6 +46,14 @@ message IssueReceiptRequest {
 message Signature {
 	string signer_id = 1;
 	bytes signature = 2;
+}
+
+/**
+* ADS Data msg
+*/ 
+message ADSData {
+	repeated Receipt receipts = 1;
+	int32 commitmentNumber = 2;
 }
 
 /**

@@ -21,4 +21,6 @@ public interface BVerifyProtocolClientAPI extends Remote {
 	 */
 	public byte[] approveDeposit(byte[] request) throws RemoteException;
 	
+	public void addNewCommitment(byte[] commitment) throws RemoteException;
+	
 }
