@@ -64,8 +64,8 @@ public class BVerifyServerConfirmAndApply extends Thread {
 				
 				// get the depositor to sign
 				System.out.println("---------------Asking depositor to sign------------");
-				BVerifyProtocolClientAPI stub = this.rmi.getClient(depositor);
-				byte[] signatureMsgBytes = stub.approveDeposit(request.toByteArray());
+				BVerifyProtocolClientAPI depositorStub = this.rmi.getClient(depositor);
+				byte[] signatureMsgBytes = depositorStub.approveDeposit(request.toByteArray());
 				
 				Signature signatureDepositor = Signature.parseFrom(signatureMsgBytes);
 				Signature signatureWarehouse = request.getSignature();
@@ -86,6 +86,10 @@ public class BVerifyServerConfirmAndApply extends Thread {
 					byte[] newCommitment = this.adsManager.commit();
 					System.out.println("Update ADS and Commiting! - NEW COMMITMENT: "+
 							Utils.byteArrayAsHexString(newCommitment));
+					// message both clients about the new commitment
+					BVerifyProtocolClientAPI warehouseStub = this.rmi.getClient(warehouse);
+					warehouseStub.addNewCommitment(newCommitment);
+					depositorStub.addNewCommitment(newCommitment);
 				}else {
 					System.out.println("Update rejected");
 					System.out.println("signed depositor: "+signedDepositor);

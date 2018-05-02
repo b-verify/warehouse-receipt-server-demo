@@ -42,7 +42,7 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 	private final Map<String, AuthenticatedSetServer> adsKeyToADS;
 	private final Map<String, Set<Receipt>> adsKeyToADSData;
 
-	private final AuthenticatedDictionaryClient authADS;
+	private AuthenticatedDictionaryClient authADS;
 	private int currentCommitmentNumber;
 	private byte[] currentCommitment;
 	
@@ -173,17 +173,22 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		try {
 			AuthProof proof = AuthProof.parseFrom(respBytes);
 			MPTDictionaryPartial mpt = MPTDictionaryPartial.deserialize(proof.getPath());
+			System.out.println("------ checking commitment matches----------");
 			if(!Arrays.equals(mpt.commitment(), this.currentCommitment)) {
 				throw new RuntimeException("commitment in proof does not match");
 			}
 			// check that the auth proof is correct
 			for(byte[] adsKey : this.account.getADSKeys()) {
 				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
-				if(!Arrays.equals(this.authADS.get(adsKey), 
+				System.out.println("------ checking ADS"+adsKeyString+"----------");
+				if(!Arrays.equals(mpt.get(adsKey), 
 						this.adsKeyToADS.get(adsKeyString).commitment())){
 					throw new RuntimeException("sever returned invalid proof!");
 				}
 			}
+			// updating ADS
+			System.out.println("------ update accepted!----------");
+			this.authADS = mpt;
 		} catch (InvalidProtocolBufferException | InvalidSerializationException | 
 				InsufficientAuthenticationDataException e) {
 			e.printStackTrace();
@@ -210,13 +215,11 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		depositors.add(bob);
 		MockWarehouse warehouseClient = new MockWarehouse(warehouse, depositors, host, port);
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Press enter to issue receipt to alice");
-		sc.nextLine();
-		warehouseClient.deposit(alice);
-		System.out.println("Press enter to shutdown");
-		sc.nextLine();
-		sc.close();
-		System.out.println("shutdown");
+		while(true) {
+			sc.nextLine();
+			System.out.println("Press enter to issue receipt to alice");
+			warehouseClient.deposit(alice);
+		}
 	}
 	
 	

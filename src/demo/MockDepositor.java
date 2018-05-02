@@ -38,7 +38,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 	private final byte[] adsKey;
 	private final Set<Receipt> adsData;
 	private final AuthenticatedSetServer ads;
-	private final AuthenticatedDictionaryClient authADS;
+	private AuthenticatedDictionaryClient authADS;
 	private int currentCommitmentNumber;
 	private byte[] currentCommitment;
 	
@@ -132,12 +132,16 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			MPTDictionaryPartial mpt = MPTDictionaryPartial.deserialize(proof.getPath());
 			byte[] valueInProof = mpt.get(this.adsKey);
 			byte[] commitmentProof = mpt.commitment();
-			if(!Arrays.equals(valueInProof, this.ads.commitment())) {
-				throw new RuntimeException("value in proof does not match");
-			}
+			System.out.println("------ checking commitment matches----------");
 			if(!Arrays.equals(commitmentProof, this.currentCommitment)) {
 				throw new RuntimeException("commitment in proof does not match");
 			}
+			System.out.println("------ checking ADS"+Utils.byteArrayAsHexString(this.adsKey)+"----------");
+			if(!Arrays.equals(valueInProof, this.ads.commitment())) {
+				throw new RuntimeException("value in proof does not match");
+			}
+			System.out.println("------ update accepted!----------");
+			this.authADS = mpt;
 		} catch (InvalidProtocolBufferException | InvalidSerializationException | InsufficientAuthenticationDataException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
