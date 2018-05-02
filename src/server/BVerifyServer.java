@@ -1,6 +1,7 @@
 package server;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,7 +41,7 @@ public class BVerifyServer {
 	 */
 	private BlockingQueue<IssueReceiptRequest> requests;
 	
-	public BVerifyServer(String base, String registryHost, int registryPort, int batchSize) {
+	public BVerifyServer(String base, String registryHost, int registryPort) {
 		this.pki = new PKIDirectory(base + "pki/");
 		System.out.println("loaded PKI");
 		this.rmi = new ClientProvider(registryHost, registryPort);
@@ -63,6 +64,10 @@ public class BVerifyServer {
 		// object
 		BVerifyServerRequestVerifier verifierForRMI = 
 				new BVerifyServerRequestVerifier(this.requests, this.adsManager);
+		
+		// do an initial commitment 
+		this.adsManager.commit();
+		
 		BVerifyProtocolServerAPI serverAPI;
 		try {
 			// port 0 = any free port
@@ -72,5 +77,19 @@ public class BVerifyServer {
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
+	}
+	
+	public static void main(String[] args) {
+		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		String host = null;
+		int port = 1099;
+		// first create a registry
+		try {
+			LocateRegistry.createRegistry(port);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
+		BVerifyServer server = new BVerifyServer(base, host, port);
 	}
 }

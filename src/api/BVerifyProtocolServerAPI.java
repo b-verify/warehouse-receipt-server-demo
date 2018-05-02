@@ -38,7 +38,8 @@ public interface BVerifyProtocolServerAPI extends Remote {
 	 * Invoked by a client to get the specified ads 
 	 * @param adsId
 	 * @return
+	 * @throws RemoteException 
 	 */
-	public byte[] getReceipts(byte[] adsId);
+	public byte[] getReceipts(byte[] adsId) throws RemoteException;
 	
 }

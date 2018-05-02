@@ -25,7 +25,7 @@ import serialization.generated.MptSerialization.MerklePrefixTrie;
 
 public class ADSManager {
 
-	private final String base;
+	private final String adsDir;
 	
 	// we store a mapping from adsKeys 
 	// to sets of clients who control the ADS.
@@ -49,8 +49,8 @@ public class ADSManager {
 	private List<MPTDictionaryFull> serverAuthADSVersions;	
 	
 	
-	public ADSManager(String base, PKIDirectory pki) {
-		this.base = base;
+	public ADSManager(String adsDir, PKIDirectory pki) {
+		this.adsDir = adsDir;
 		this.serverAuthADSVersions = new ArrayList<>();
 		
 		// First all the ADS Keys and 
@@ -60,9 +60,11 @@ public class ADSManager {
 		this.adsKeyStringToBytes = new HashMap<>();
 		Set<Account> accounts = pki.getAllAccounts();
 		for(Account a : accounts) {
+			System.out.println("loading account: "+a.getFirstName());
 			Set<byte[]> adsKeys = a.getADSKeys();
 			for(byte[] adsKey : adsKeys) {
 				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
+				System.out.println("has key: "+adsKeyString);
 				this.adsKeyStringToBytes.put(adsKeyString, adsKey);
 				Set<Account> accs = this.adsKeyToADSOwners.get(adsKeyString);
 				if(accs == null) {
@@ -78,13 +80,14 @@ public class ADSManager {
 		this.adsKeyToADSData = new HashMap<>();
 		this.adsKeyToADS = new HashMap<>();
 		this.serverAuthADS = new MPTDictionaryFull();
-		for(String adsKeyString : this.adsKeyToADSData.keySet()) {
-			Set<Receipt> receipts = BootstrapMockSetup.loadReceipts(base, adsKeyString);
+		for(String adsKeyString : this.adsKeyStringToBytes.keySet()) {
+			Set<Receipt> receipts = BootstrapMockSetup.loadReceipts(adsDir, adsKeyString);
 			MPTSetFull ads = new MPTSetFull();
 			for(Receipt r : receipts) {
 				byte[] witness = CryptographicUtils.witnessReceipt(r);
 				ads.insert(witness);
 			}
+			System.out.println(adsKeyString+ " - has #: "+receipts.size()+" receipts");
 			this.adsKeyToADSData.put(adsKeyString, receipts);
 			this.adsKeyToADS.put(adsKeyString, ads);
 			this.serverAuthADS.insert(this.adsKeyStringToBytes.get(adsKeyString), ads.commitment());
@@ -131,6 +134,7 @@ public class ADSManager {
 		MPTDictionaryFull copy;
 		try {
 			copy = MPTDictionaryFull.deserialize(asBytes);
+			this.serverAuthADSVersions.add(copy);
 		} catch (InvalidSerializationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("internal error");
@@ -141,6 +145,7 @@ public class ADSManager {
 	}
 
 	public synchronized int getCurrentCommitmentNumber() {
+		assert this.serverAuthADSVersions.size() > 0;
 		return this.serverAuthADSVersions.size()-1;
 	}
 	
@@ -164,7 +169,7 @@ public class ADSManager {
 		// TBD
 		byte[] asBytes = this.serverAuthADS.serialize().toByteArray();
 		try {
-			File f = new File(base + "-" + this.serverAuthADS.commitment());
+			File f = new File(adsDir + "-" + this.serverAuthADS.commitment());
 			FileOutputStream fos = new FileOutputStream(f);
 			fos.write(asBytes);
 			fos.close();

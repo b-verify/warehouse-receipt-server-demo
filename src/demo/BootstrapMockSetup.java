@@ -42,21 +42,21 @@ public class BootstrapMockSetup {
 		Account alice = new Account("Alice", "A");
 		Account bob = new Account("Bob", "B");
 		Account warehouse = new Account("Warehouse", "Holdings");
-		
-		List<Account> ads1accounts = new ArrayList<>();
-		List<Account> ads2accounts = new ArrayList<>();
-		
+				
 		// ads 1 = alice + warehouse
+		List<Account> ads1accounts = new ArrayList<>();
 		ads1accounts.add(alice);
 		ads1accounts.add(warehouse);
 		byte[] ads1Id = CryptographicUtils.listOfAccountsToADSKey(ads1accounts);
 		String ads1IdString = Utils.byteArrayAsHexString(ads1Id);
+		String ads1FileDir = clientADSDirectoryFile+ads1IdString+"/";
+		new File(ads1FileDir).mkdir();
 		MPTSetFull ads1 = new MPTSetFull();
 		// add 3 random receipts 
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < 10; i++) {
 			Receipt randomReceipt = BootstrapMockSetup.generateReceipt(warehouse, alice);
 			byte[] witness = CryptographicUtils.witnessReceipt(randomReceipt);
-			File receiptFile = new File(clientADSDirectoryFile+ads1IdString+"/"+i);
+			File receiptFile = new File(ads1FileDir+i);
 			writeBytesToFile(receiptFile, randomReceipt.toByteArray());
 			ads1.insert(witness);
 		}
@@ -65,16 +65,19 @@ public class BootstrapMockSetup {
 		
 		
 		// ads 2 = bob + warehouse
-		ads2accounts.add(alice);
+		List<Account> ads2accounts = new ArrayList<>();
+		ads2accounts.add(bob);
 		ads2accounts.add(warehouse);
 		byte[] ads2Id = CryptographicUtils.listOfAccountsToADSKey(ads2accounts);
 		String ads2IdString = Utils.byteArrayAsHexString(ads2Id);
+		String ads2FileDir = clientADSDirectoryFile+ads2IdString+"/";
+		new File(ads2FileDir).mkdir();
 		MPTSetFull ads2 = new MPTSetFull();
 		// add 3 random receipts 
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < 10; i++) {
 			Receipt randomReceipt = BootstrapMockSetup.generateReceipt(warehouse, bob);
 			byte[] witness = CryptographicUtils.witnessReceipt(randomReceipt);
-			File receiptFile = new File(clientADSDirectoryFile+ads2IdString+"/"+i);
+			File receiptFile = new File(ads2FileDir+i);
 			writeBytesToFile(receiptFile, randomReceipt.toByteArray());
 			ads2.insert(witness);
 		}
@@ -84,7 +87,7 @@ public class BootstrapMockSetup {
 		// save the accounts 
 		alice.saveToFile(pkiDirectoryFile);
 		bob.saveToFile(pkiDirectoryFile);
-		warehouse.saveToFile(clientADSDirectoryFile);
+		warehouse.saveToFile(pkiDirectoryFile);
 	}
 	
 	
@@ -155,9 +158,8 @@ public class BootstrapMockSetup {
 	}
 	
 	public static void main(String[] args) {
-		
 		// runs the bootstrap to setup the mock data
-		// String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/mock-data/";
-		// BootstrapMockSetup.bootstrapWarehouseUsecase(10, 1, 10, base);
+		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		BootstrapMockSetup.bootstrapSimpleDemo(base);
 	}
 }

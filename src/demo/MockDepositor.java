@@ -15,11 +15,13 @@ import crpyto.CryptographicSignature;
 import crpyto.CryptographicUtils;
 import mpt.core.InsufficientAuthenticationDataException;
 import mpt.core.InvalidSerializationException;
+import mpt.core.Utils;
 import mpt.dictionary.AuthenticatedDictionaryClient;
 import mpt.dictionary.MPTDictionaryPartial;
 import mpt.set.AuthenticatedSetServer;
 import mpt.set.MPTSetFull;
 import pki.Account;
+import pki.PKIDirectory;
 import rmi.ClientProvider;
 import serialization.generated.BVerifyAPIMessageSerialization.ADSData;
 import serialization.generated.BVerifyAPIMessageSerialization.AuthProof;
@@ -44,6 +46,9 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 		this.adsKey = a.getADSKeys().iterator().next();
 		this.rmi = new ClientProvider(host, port);
 	
+		System.out.println("loading mock depositor "+a.getFirstName());
+		System.out.println("cares about ads: "+Utils.byteArrayAsHexString(this.adsKey));
+		
 		try {
 			// first ask for the receipts and current commitment
 			this.ads = new MPTSetFull();
@@ -51,6 +56,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			byte[] recieptDataBytes = this.rmi.getServer().getReceipts(this.adsKey);
 			ADSData receiptDataMsg = ADSData.parseFrom(recieptDataBytes);
 			for(Receipt r : receiptDataMsg.getReceiptsList()) {
+				System.out.println("adding receipt: "+r);
 				this.adsData.add(r);
 				byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
 				this.ads.insert(receiptWitness);
@@ -60,6 +66,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			// next ask for the auth path
 			List<byte[]> adsKeys = new ArrayList<>();
 			adsKeys.add(this.adsKey);
+			System.out.println("asking for proof of data");
 			byte[] pathBytes = this.rmi.getServer().getAuthPath(adsKeys, this.currentCommitmentNumber);
 			this.authADS = MPTDictionaryPartial.deserialize(AuthProof.parseFrom(pathBytes).getPath());
 			
@@ -120,5 +127,20 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+	
+	public static void main(String[] args) {
+		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		PKIDirectory pki = new PKIDirectory(base+"pki/");
+		String host = null;
+		int port = 1099;
+		/**
+		 * Alice: 59d6dd79-4bbe-4043-ba3e-e2a91e2376ae
+		 * Bob: b132bbfa-98bc-4e5d-b32d-f78d603600f5
+		 * Warehouse: 2cd00d43-bf5c-4728-9323-d2ea0092ed36
+		 */
+		Account alice = pki.getAccount("59d6dd79-4bbe-4043-ba3e-e2a91e2376ae");
+		MockDepositor aliceClient = new MockDepositor(alice, host, port);
+	}
+	
 	
 }
