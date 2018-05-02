@@ -1,12 +1,14 @@
 package demo;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,8 +56,16 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 			System.out.println(a.getFirstName());
 		}
 		assert this.account.getADSKeys().size() == this.depositors.size();
-		
-		this.rmi = new ClientProvider(host, port);
+		this.rmi = new ClientProvider(host, port);		
+		BVerifyProtocolClientAPI clientAPI;
+		try {
+			// port 0 = any free port
+			clientAPI = (BVerifyProtocolClientAPI) UnicastRemoteObject.exportObject(this, 0);
+			this.rmi.bind(this.account.getIdAsString(), this);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
 		
 		this.adsKeyToADS = new HashMap<>();
 		this.adsKeyToADSData = new HashMap<>();
@@ -73,12 +83,12 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 					ads.insert(receiptWitness);
 				}
 				System.out.println("added "+adsData.size()+" receipts");
+				this.currentCommitment = receiptDataMsg.getCommitment().toByteArray();
 				this.currentCommitmentNumber = receiptDataMsg.getCommitmentNumber();
 				this.adsKeyToADS.put(adsKeyString, ads);
 				this.adsKeyToADSData.put(adsKeyString, adsData);
 			}
 
-			
 			// next ask for the auth paths
 			System.out.println("asking for the authentication proof");
 			List<byte[]> keys = this.account.getADSKeys().stream().collect(Collectors.toList());
@@ -94,6 +104,7 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 					throw new RuntimeException("sever returned invalid proof!");
 				}
 			}
+			
 			System.out.println("verified! warehouse client is ready");
 		}catch(Exception e) {
 			throw new RuntimeException("cannot parse response from server");
@@ -106,12 +117,12 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 	}
 	
 	
-	public void deposit() {
-		Account depositor = this.depositors.get(0);
+	public void deposit(Account depositor) {
 		this.deposit(BootstrapMockSetup.generateReceipt(this.account, depositor), depositor);
 	}
 	
 	public void deposit(Receipt r, Account depositor) {
+		System.out.println("Depositing receipt: "+r+" to "+depositor.getFirstName());
 		List<Account> accounts = new ArrayList<>();
 		accounts.add(this.account);
 		accounts.add(depositor);
@@ -125,8 +136,9 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		adsData.add(r);
 		byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
 		ads.insert(receiptWitness);
-		byte[] witnessToSign = ads.commitment();
-		byte[] signature = CryptographicSignature.sign(witnessToSign, this.account.getPrivateKey());
+		byte[] newAdsRoot = ads.commitment();
+		System.out.println("new ads root: "+Utils.byteArrayAsHexString(newAdsRoot));
+		byte[] signature = CryptographicSignature.sign(newAdsRoot, this.account.getPrivateKey());
 		
 		IssueReceiptRequest request = IssueReceiptRequest.newBuilder()
 				.setIssuerId(this.account.getIdAsString())
@@ -140,6 +152,7 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		
 		// invoke on the server
 		try {
+			System.out.println("sending to server");
 			this.rmi.getServer().issueReceipt(request.toByteArray());
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -196,7 +209,16 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		depositors.add(alice);
 		depositors.add(bob);
 		MockWarehouse warehouseClient = new MockWarehouse(warehouse, depositors, host, port);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Press enter to issue receipt to alice");
+		sc.nextLine();
+		warehouseClient.deposit(alice);
+		System.out.println("Press enter to shutdown");
+		sc.nextLine();
+		sc.close();
+		System.out.println("shutdown");
 	}
+	
 	
 }
 

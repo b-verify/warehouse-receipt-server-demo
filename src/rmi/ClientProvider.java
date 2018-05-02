@@ -54,7 +54,8 @@ public class ClientProvider {
 			clientAPI = (BVerifyProtocolClientAPI) this.registry.lookup(id);
 			return clientAPI;
 		} catch (RemoteException | NotBoundException e) {
-			return null;
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 	

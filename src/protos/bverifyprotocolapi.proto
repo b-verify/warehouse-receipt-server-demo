@@ -54,6 +54,7 @@ message Signature {
 message ADSData {
 	repeated Receipt receipts = 1;
 	int32 commitmentNumber = 2;
+	bytes commitment = 3;
 }
 
 /**

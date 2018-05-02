@@ -1,10 +1,12 @@
 package demo;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import com.google.protobuf.ByteString;
@@ -45,6 +47,15 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 		assert a.getADSKeys().size() == 1;
 		this.adsKey = a.getADSKeys().iterator().next();
 		this.rmi = new ClientProvider(host, port);
+		BVerifyProtocolClientAPI clientAPI;
+		try {
+			// port 0 = any free port
+			clientAPI = (BVerifyProtocolClientAPI) UnicastRemoteObject.exportObject(this, 0);
+			this.rmi.bind(this.account.getIdAsString(), this);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
 	
 		System.out.println("loading mock depositor "+a.getFirstName());
 		System.out.println("cares about ads: "+Utils.byteArrayAsHexString(this.adsKey));
@@ -61,6 +72,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 				byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
 				this.ads.insert(receiptWitness);
 			}
+			this.currentCommitment = receiptDataMsg.getCommitment().toByteArray();
 			this.currentCommitmentNumber = receiptDataMsg.getCommitmentNumber();
 			
 			// next ask for the auth path
@@ -69,14 +81,14 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			System.out.println("asking for proof of data");
 			byte[] pathBytes = this.rmi.getServer().getAuthPath(adsKeys, this.currentCommitmentNumber);
 			AuthProof proof = AuthProof.parseFrom(pathBytes);
-			System.out.println("RESPONSE : "+proof);
 			this.authADS = MPTDictionaryPartial.deserialize(proof.getPath());
 			
 			// check that the auth proof is correct
-			if(Arrays.equals(this.authADS.get(this.adsKey), this.ads.commitment())){
+			if(!Arrays.equals(this.authADS.get(this.adsKey), this.ads.commitment())){
 				throw new RuntimeException("sever returned invalid proof!");
 			}
 		}catch(Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("cannot parse response from server");
 		}
 	}
@@ -87,14 +99,16 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 		try {
 			requestMsg = IssueReceiptRequest.parseFrom(request);
 			Receipt receipt = requestMsg.getReceipt();
+			System.out.println("Recieved Request To Issue Receipt: "+receipt);
 			this.adsData.add(receipt);
 			byte[] witness = CryptographicUtils.witnessReceipt(receipt);
 			this.ads.insert(witness);
-			
-			byte[] newRoot = CryptographicSignature.sign(this.ads.commitment(), this.account.getPrivateKey());			
+			byte[] newRoot = this.ads.commitment();
+			System.out.println("new ads root: "+Utils.byteArrayAsHexString(newRoot));
+			byte[] sig = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());			
 			return Signature.newBuilder()
 					.setSignerId(this.account.getIdAsString())
-					.setSignature(ByteString.copyFrom(newRoot))
+					.setSignature(ByteString.copyFrom(sig))
 					.build()
 					.toByteArray();
 		} catch (InvalidProtocolBufferException e) {
@@ -142,6 +156,11 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 		 */
 		Account alice = pki.getAccount("59d6dd79-4bbe-4043-ba3e-e2a91e2376ae");
 		MockDepositor aliceClient = new MockDepositor(alice, host, port);
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();
+		System.out.println("Press enter to shutdown");
+		sc.close();
+		System.out.println("shutdown");
 	}
 	
 	

@@ -11,6 +11,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import api.BVerifyProtocolClientAPI;
 import crpyto.CryptographicSignature;
 import crpyto.CryptographicUtils;
+import mpt.core.Utils;
 import mpt.set.AuthenticatedSetServer;
 import pki.Account;
 import pki.PKIDirectory;
@@ -43,6 +44,7 @@ public class BVerifyServerConfirmAndApply extends Thread {
 			while(true) {
 				// block and wait for a request to be issued
 				IssueReceiptRequest request = this.requests.take();
+				System.out.println("---------------Processing updated--------------");
 				Receipt receipt = request.getReceipt();
 				Account warehouse = this.pki.getAccount(receipt.getWarehouseId());
 				Account depositor = this.pki.getAccount(receipt.getDepositorId());
@@ -58,27 +60,36 @@ public class BVerifyServerConfirmAndApply extends Thread {
 				ads.insert(receiptWitness);
 				adsData.add(receipt);
 				byte[] newRoot = ads.commitment();
+				System.out.println("NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
 				
 				// get the depositor to sign
+				System.out.println("---------------Asking depositor to sign------------");
 				BVerifyProtocolClientAPI stub = this.rmi.getClient(depositor);
-				byte[] signatureMsgBytes = stub.approveDeposit(receipt.toByteArray());
+				byte[] signatureMsgBytes = stub.approveDeposit(request.toByteArray());
 				
 				Signature signatureDepositor = Signature.parseFrom(signatureMsgBytes);
 				Signature signatureWarehouse = request.getSignature();
 				
 				// now check the signatures 
-				boolean signedDepositor = CryptographicSignature.verify(newRoot, signatureDepositor.toByteArray(),
+				boolean signedDepositor = CryptographicSignature.verify(newRoot, 
+						signatureDepositor.getSignature().toByteArray(),
 						depositor.getPublicKey());
-				boolean signedWarehouse = CryptographicSignature.verify(newRoot, signatureWarehouse.toByteArray(),
+				boolean signedWarehouse = CryptographicSignature.verify(newRoot, 
+						signatureWarehouse.getSignature().toByteArray(),
 						warehouse.getPublicKey());
 				
 				// if both have signed, update the authentication
 				// and commit
 				if(signedDepositor && signedWarehouse) {
-					System.out.println("Updating ADS");
 					this.adsManager.updateADS(adsKey, adsData, ads);
+					// committing!
+					byte[] newCommitment = this.adsManager.commit();
+					System.out.println("Update ADS and Commiting! - NEW COMMITMENT: "+
+							Utils.byteArrayAsHexString(newCommitment));
 				}else {
 					System.out.println("Update rejected");
+					System.out.println("signed depositor: "+signedDepositor);
+					System.out.println("signed warehouse: "+signedWarehouse);
 				}
 			}
 		} catch(InterruptedException | RemoteException | InvalidProtocolBufferException e) {

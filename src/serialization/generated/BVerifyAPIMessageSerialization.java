@@ -3330,6 +3330,11 @@ public final class BVerifyAPIMessageSerialization {
      * <code>int32 commitmentNumber = 2;</code>
      */
     int getCommitmentNumber();
+
+    /**
+     * <code>bytes commitment = 3;</code>
+     */
+    com.google.protobuf.ByteString getCommitment();
   }
   /**
    * <pre>
@@ -3351,6 +3356,7 @@ public final class BVerifyAPIMessageSerialization {
     private ADSData() {
       receipts_ = java.util.Collections.emptyList();
       commitmentNumber_ = 0;
+      commitment_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -3396,6 +3402,11 @@ public final class BVerifyAPIMessageSerialization {
             case 16: {
 
               commitmentNumber_ = input.readInt32();
+              break;
+            }
+            case 26: {
+
+              commitment_ = input.readBytes();
               break;
             }
           }
@@ -3470,6 +3481,15 @@ public final class BVerifyAPIMessageSerialization {
       return commitmentNumber_;
     }
 
+    public static final int COMMITMENT_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString commitment_;
+    /**
+     * <code>bytes commitment = 3;</code>
+     */
+    public com.google.protobuf.ByteString getCommitment() {
+      return commitment_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -3488,6 +3508,9 @@ public final class BVerifyAPIMessageSerialization {
       if (commitmentNumber_ != 0) {
         output.writeInt32(2, commitmentNumber_);
       }
+      if (!commitment_.isEmpty()) {
+        output.writeBytes(3, commitment_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3503,6 +3526,10 @@ public final class BVerifyAPIMessageSerialization {
       if (commitmentNumber_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, commitmentNumber_);
+      }
+      if (!commitment_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, commitment_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -3524,6 +3551,8 @@ public final class BVerifyAPIMessageSerialization {
           .equals(other.getReceiptsList());
       result = result && (getCommitmentNumber()
           == other.getCommitmentNumber());
+      result = result && getCommitment()
+          .equals(other.getCommitment());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -3541,6 +3570,8 @@ public final class BVerifyAPIMessageSerialization {
       }
       hash = (37 * hash) + COMMITMENTNUMBER_FIELD_NUMBER;
       hash = (53 * hash) + getCommitmentNumber();
+      hash = (37 * hash) + COMMITMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getCommitment().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3684,6 +3715,8 @@ public final class BVerifyAPIMessageSerialization {
         }
         commitmentNumber_ = 0;
 
+        commitment_ = com.google.protobuf.ByteString.EMPTY;
+
         return this;
       }
 
@@ -3718,6 +3751,7 @@ public final class BVerifyAPIMessageSerialization {
           result.receipts_ = receiptsBuilder_.build();
         }
         result.commitmentNumber_ = commitmentNumber_;
+        result.commitment_ = commitment_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3788,6 +3822,9 @@ public final class BVerifyAPIMessageSerialization {
         }
         if (other.getCommitmentNumber() != 0) {
           setCommitmentNumber(other.getCommitmentNumber());
+        }
+        if (other.getCommitment() != com.google.protobuf.ByteString.EMPTY) {
+          setCommitment(other.getCommitment());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4079,6 +4116,35 @@ public final class BVerifyAPIMessageSerialization {
       public Builder clearCommitmentNumber() {
         
         commitmentNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString commitment_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes commitment = 3;</code>
+       */
+      public com.google.protobuf.ByteString getCommitment() {
+        return commitment_;
+      }
+      /**
+       * <code>bytes commitment = 3;</code>
+       */
+      public Builder setCommitment(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        commitment_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes commitment = 3;</code>
+       */
+      public Builder clearCommitment() {
+        
+        commitment_ = getDefaultInstance().getCommitment();
         onChanged();
         return this;
       }
@@ -4769,12 +4835,13 @@ public final class BVerifyAPIMessageSerialization {
       "t\030\003 \001(\0132 .serialization.generated.Receip" +
       "t\0225\n\tsignature\030\004 \001(\0132\".serialization.gen" +
       "erated.Signature\"1\n\tSignature\022\021\n\tsigner_" +
-      "id\030\001 \001(\t\022\021\n\tsignature\030\002 \001(\014\"W\n\007ADSData\0222" +
+      "id\030\001 \001(\t\022\021\n\tsignature\030\002 \001(\014\"k\n\007ADSData\0222" +
       "\n\010receipts\030\001 \003(\0132 .serialization.generat" +
-      "ed.Receipt\022\030\n\020commitmentNumber\030\002 \001(\005\"D\n\t" +
-      "AuthProof\0227\n\004path\030\001 \001(\0132).serialization." +
-      "generated.MerklePrefixTrieB B\036BVerifyAPI" +
-      "MessageSerializationb\006proto3"
+      "ed.Receipt\022\030\n\020commitmentNumber\030\002 \001(\005\022\022\n\n" +
+      "commitment\030\003 \001(\014\"D\n\tAuthProof\0227\n\004path\030\001 " +
+      "\001(\0132).serialization.generated.MerklePref" +
+      "ixTrieB B\036BVerifyAPIMessageSerialization" +
+      "b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4812,7 +4879,7 @@ public final class BVerifyAPIMessageSerialization {
     internal_static_serialization_generated_ADSData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_serialization_generated_ADSData_descriptor,
-        new java.lang.String[] { "Receipts", "CommitmentNumber", });
+        new java.lang.String[] { "Receipts", "CommitmentNumber", "Commitment", });
     internal_static_serialization_generated_AuthProof_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_serialization_generated_AuthProof_fieldAccessorTable = new

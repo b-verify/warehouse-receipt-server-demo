@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
+import com.google.protobuf.ByteString;
+
 import api.BVerifyProtocolServerAPI;
 import serialization.generated.BVerifyAPIMessageSerialization.ADSData;
 import serialization.generated.BVerifyAPIMessageSerialization.AuthProof;
@@ -42,7 +44,6 @@ public class BVerifyServerRequestVerifier implements BVerifyProtocolServerAPI {
 		AuthProof response = AuthProof.newBuilder()
 				.setPath(proof)
 				.build();
-		System.out.println("Response: "+response);
 		return response.toByteArray();
 	}
 
@@ -53,8 +54,9 @@ public class BVerifyServerRequestVerifier implements BVerifyProtocolServerAPI {
 		ADSData response = ADSData.newBuilder()
 				.addAllReceipts(adsData)
 				.setCommitmentNumber(this.adsManager.getCurrentCommitmentNumber())
+				.setCommitment(ByteString.copyFrom(this.adsManager.getCommitment(
+						this.adsManager.getCurrentCommitmentNumber())))
 				.build();
-		System.out.println("Response: "+response);
 		return response.toByteArray();
 	}
 
