@@ -48,7 +48,11 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 			List<Account> depositors, String host, int port) {
 		this.account = thisWarehouse;
 		this.depositors = depositors;
-
+		System.out.println("loading mock warehouse "+thisWarehouse.getFirstName());
+		System.out.println("with clients: ");
+		for(Account a : depositors) {
+			System.out.println(a.getFirstName());
+		}
 		assert this.account.getADSKeys().size() == this.depositors.size();
 		
 		this.rmi = new ClientProvider(host, port);
@@ -68,6 +72,7 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 					byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
 					ads.insert(receiptWitness);
 				}
+				System.out.println("added "+adsData.size()+" receipts");
 				this.currentCommitmentNumber = receiptDataMsg.getCommitmentNumber();
 				this.adsKeyToADS.put(adsKeyString, ads);
 				this.adsKeyToADSData.put(adsKeyString, adsData);
@@ -75,18 +80,21 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 
 			
 			// next ask for the auth paths
+			System.out.println("asking for the authentication proof");
 			List<byte[]> keys = this.account.getADSKeys().stream().collect(Collectors.toList());
 			byte[] pathBytes = this.rmi.getServer().getAuthPath(keys, this.currentCommitmentNumber);
-			this.authADS = MPTDictionaryPartial.deserialize(AuthProof.parseFrom(pathBytes).getPath());
+			AuthProof authproof = AuthProof.parseFrom(pathBytes);
+			this.authADS = MPTDictionaryPartial.deserialize(authproof.getPath());
 			
 			// check that the auth proof is correct
-			for(byte[] adsKey : this.account.getADSKeys()) {
+			for (byte[] adsKey : this.account.getADSKeys()) {
 				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
 				if(!Arrays.equals(this.authADS.get(adsKey), 
 						this.adsKeyToADS.get(adsKeyString).commitment())){
 					throw new RuntimeException("sever returned invalid proof!");
 				}
 			}
+			System.out.println("verified! warehouse client is ready");
 		}catch(Exception e) {
 			throw new RuntimeException("cannot parse response from server");
 		}

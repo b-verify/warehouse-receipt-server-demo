@@ -68,7 +68,9 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 			adsKeys.add(this.adsKey);
 			System.out.println("asking for proof of data");
 			byte[] pathBytes = this.rmi.getServer().getAuthPath(adsKeys, this.currentCommitmentNumber);
-			this.authADS = MPTDictionaryPartial.deserialize(AuthProof.parseFrom(pathBytes).getPath());
+			AuthProof proof = AuthProof.parseFrom(pathBytes);
+			System.out.println("RESPONSE : "+proof);
+			this.authADS = MPTDictionaryPartial.deserialize(proof.getPath());
 			
 			// check that the auth proof is correct
 			if(Arrays.equals(this.authADS.get(this.adsKey), this.ads.commitment())){
