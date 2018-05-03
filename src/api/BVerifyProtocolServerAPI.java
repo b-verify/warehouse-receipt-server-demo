@@ -12,6 +12,9 @@ import java.util.List;
  */
 public interface BVerifyProtocolServerAPI extends Remote {
 	
+	
+	public boolean bindClient(String clientName, BVerifyProtocolClientAPI clientStub);
+	
 	/**
 	 * Invoked by the warehouse on the server to 
 	 * start issuing a receipt

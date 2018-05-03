@@ -7,7 +7,9 @@ import java.util.concurrent.BlockingQueue;
 
 import com.google.protobuf.ByteString;
 
+import api.BVerifyProtocolClientAPI;
 import api.BVerifyProtocolServerAPI;
+import rmi.ClientProvider;
 import serialization.generated.BVerifyAPIMessageSerialization.ADSData;
 import serialization.generated.BVerifyAPIMessageSerialization.AuthProof;
 import serialization.generated.BVerifyAPIMessageSerialization.IssueReceiptRequest;
@@ -18,12 +20,14 @@ public class BVerifyServerRequestVerifier implements BVerifyProtocolServerAPI {
 	
 	// shared data
 	private final ADSManager adsManager;
-	private BlockingQueue<IssueReceiptRequest> requests;
+	private final BlockingQueue<IssueReceiptRequest> requests;
+	private final ClientProvider rmi;
 
 	public BVerifyServerRequestVerifier( 
-			BlockingQueue<IssueReceiptRequest> requests, ADSManager ads) {
+			BlockingQueue<IssueReceiptRequest> requests, ADSManager ads, ClientProvider rmi) {
 		this.adsManager = ads;
 		this.requests = requests;
+		this.rmi = rmi;
 	}
 	
 	@Override
@@ -58,6 +62,12 @@ public class BVerifyServerRequestVerifier implements BVerifyProtocolServerAPI {
 						this.adsManager.getCurrentCommitmentNumber())))
 				.build();
 		return response.toByteArray();
+	}
+
+	@Override
+	public boolean bindClient(String clientName, BVerifyProtocolClientAPI clientStub) {
+		this.rmi.bind(clientName, clientStub);
+		return true;
 	}
 
 }

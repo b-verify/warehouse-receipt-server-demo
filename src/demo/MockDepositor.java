@@ -47,11 +47,11 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 		assert a.getADSKeys().size() == 1;
 		this.adsKey = a.getADSKeys().iterator().next();
 		this.rmi = new ClientProvider(host, port);
-		BVerifyProtocolClientAPI clientAPI;
+		BVerifyProtocolClientAPI clientStub;
 		try {
 			// port 0 = any free port
-			clientAPI = (BVerifyProtocolClientAPI) UnicastRemoteObject.exportObject(this, 0);
-			this.rmi.bind(this.account.getIdAsString(), this);
+			clientStub = (BVerifyProtocolClientAPI) UnicastRemoteObject.exportObject(this, 0);
+			this.rmi.getServer().bindClient(this.account.getIdAsString(), clientStub);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			throw new RuntimeException();
@@ -151,7 +151,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = null;
+		String host = "hubris.media.mit.edu";
 		int port = 1099;
 		/**
 		 * Alice: 59d6dd79-4bbe-4043-ba3e-e2a91e2376ae

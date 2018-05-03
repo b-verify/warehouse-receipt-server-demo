@@ -63,7 +63,7 @@ public class BVerifyServer {
 		// may invoke multiple methods concurrently on this 
 		// object
 		BVerifyServerRequestVerifier verifierForRMI = 
-				new BVerifyServerRequestVerifier(this.requests, this.adsManager);
+				new BVerifyServerRequestVerifier(this.requests, this.adsManager, this.rmi);
 		
 		// do an initial commitment 
 		this.adsManager.commit();
