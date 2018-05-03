@@ -197,7 +197,7 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 	}
 	
 	public static void main(String[] args) {
-		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
 		String host = null;
 		int port = 1099;
