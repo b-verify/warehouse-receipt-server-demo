@@ -80,7 +80,7 @@ public class BVerifyServer {
 	}
 	
 	public static void main(String[] args) {
-		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		String base = System.getProperty("user.dir") + "/demos/";
 		String host = null;
 		int port = 1099;
 		// first create a registry
