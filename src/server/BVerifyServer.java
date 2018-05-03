@@ -85,6 +85,7 @@ public class BVerifyServer {
 		int port = 1099;
 		// first create a registry
 		try {
+			System.setProperty("java.rmi.server.hostname", "18.85.22.252");
 			LocateRegistry.createRegistry(port);
 		} catch (RemoteException e) {
 			e.printStackTrace();
