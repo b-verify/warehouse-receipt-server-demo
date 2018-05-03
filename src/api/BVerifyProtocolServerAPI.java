@@ -13,7 +13,8 @@ import java.util.List;
 public interface BVerifyProtocolServerAPI extends Remote {
 	
 	
-	public boolean bindClient(String clientName, BVerifyProtocolClientAPI clientStub);
+	public boolean bindClient(String clientName, BVerifyProtocolClientAPI clientStub) 
+		throws RemoteException;
 	
 	/**
 	 * Invoked by the warehouse on the server to 
