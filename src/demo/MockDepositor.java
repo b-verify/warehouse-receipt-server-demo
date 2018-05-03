@@ -151,7 +151,7 @@ public class MockDepositor implements BVerifyProtocolClientAPI {
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = "hubris.media.mit.edu";
+		String host = "18.85.22.252";
 		int port = 1099;
 		/**
 		 * Alice: 59d6dd79-4bbe-4043-ba3e-e2a91e2376ae
