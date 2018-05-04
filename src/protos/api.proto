@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "protos/mpt.proto";
+option java_multiple_files = true;
+option java_package = "io.grpc.bverify";
+option java_outer_classname = "BVerifyAPI";
+
+package api;
+
+/**
+* OVERALL NOTES:
+*	-   an id is a string representing a unique user id 
+*		that allows each client to look up that user in a 
+* 		pki. 
+*/
+
+
+/**
+*	API Interface Exported by the Server
+*/
+service BVerifyServerAPI {
+	
+	rpc IssueReceipt(IssueReceiptRequest) returns (IssueReceiptResponse) {}
+	
+	rpc GetApprovalRequests(ApprovalsRequest) returns (ApprovalsResponse) {}
+	
+	rpc SubmitSignature(SubmitSignatureRequest) returns (SubmitSignatureResponse) {}
+	
+	rpc GetDataRequest(DataRequest) returns (DataResponse) {}
+
+	rpc GetAuthPath(PathRequest) returns (PathResponse) {}
+
+}
+
+message IssueReceiptRequest {
+	string issuer_id = 1;
+	string recepient_id = 2;
+	Receipt receipt = 3;
+	Signature signature = 4;
+}
+
+message IssueReceiptResponse{
+	bool scheduled = 1;
+}
+
+message ApprovalsRequest{
+	string id = 1;
+}
+
+message ApprovalsResponse{
+	IssueReceiptRequest request = 1;
+}
+
+message SubmitSignatureRequest {
+	IssueReceiptRequest request = 1;
+	Signature signature = 2;
+}
+
+message SubmitSignatureResponse {
+	bool accepted = 1;
+}
+
+message DataRequest {
+	repeated bytes adsIds = 1;
+	int32 commitmentNumber = 2;
+}
+
+message DataResponse {
+	repeated Receipt receipts = 1;
+	int32 commitmentNumber = 2;
+	bytes commitment = 3;
+}
+
+message PathRequest {
+	repeated bytes adsIds = 1;
+	int32 commitmentNumber = 2;
+}
+
+message PathResponse {
+	serialization.generated.MerklePrefixTrie path = 1;
+}
+
+/**
+*  Signature  
+*/
+message Signature {
+	string signer_id = 1;
+	bytes signature = 2;
+}
+
+/**
+*   Receipt (this is a stand in for arbitrary data)
+*/
+message Receipt {
+    string warehouse_id = 1;
+    string depositor_id = 2;
+    string accountant = 3;
+    string category = 4;
+    string date = 5;
+    string insurance = 6;
+    double weight = 7;
+    double volume = 8;
+    double humidity = 9;
+    double price = 10;
+    string details = 11;
+}
+
+
+

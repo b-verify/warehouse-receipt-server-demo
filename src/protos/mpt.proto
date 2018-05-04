@@ -37,6 +37,8 @@ message InteriorNode {
 
 /**
 *	Leaf in the tree
+* 	NOTE a dictionary leaf must have key and value
+*   but set leafs only have a value 
 */
 message Leaf{
 	bytes key = 1;	
@@ -56,9 +58,4 @@ message EmptyLeaf{
 message MerklePrefixTrie{
 	Node root = 1;
 }
-
-
-
-
-
 

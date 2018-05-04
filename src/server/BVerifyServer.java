@@ -1,18 +1,18 @@
 package server;
 
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
-import api.BVerifyProtocolServerAPI;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 import pki.PKIDirectory;
-import rmi.ClientProvider;
-import serialization.generated.BVerifyAPIMessageSerialization.IssueReceiptRequest;
+import serialization.generated.IssueReceiptRequest;;
 
 public class BVerifyServer {
-	
+	private static final Logger logger = Logger.getLogger(BVerifyServer.class.getName());
+
 	/*
 	 * Public Key Infrastructure - for identifying clients. For now this is mocked,
 	 * but there are a variety of different possible ways to implement this.
@@ -20,77 +20,75 @@ public class BVerifyServer {
 	private final PKIDirectory pki;
 
 	/*
-	 * RMI (or other RPC framework) for sending requests
-	 */
-	private final ClientProvider rmi;
-	
-	/** 
-	 * 			SHARED DATA
-	 */
-	
-	/*
-	 * ADS Manager used to update the authentication information
-	 * stored on the server. 
+	 * ADS Manager used to update the authentication information stored on the
+	 * server.
 	 */
 	protected final ADSManager adsManager;
 
-	/*
-	 * This is a shared queue using the producer-consumer 
-	 * design pattern. This queue contains requests to verify and,
-	 * if they verify, to commit.
+	protected final Map<String, IssueReceiptRequest> approvalRequests;
+
+	private Server server;
+
+	private void start() throws IOException {
+		/* The port on which the server should run */
+		int port = 50051;
+		server = ServerBuilder.forPort(port).addService(new GreeterImpl()).build().start();
+		logger.info("Server started, listening on " + port);
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				// Use stderr here since the logger may have been reset by its JVM shutdown
+				// hook.
+				System.err.println("*** shutting down gRPC server since JVM is shutting down");
+				BVerifyServer.this.stop();
+				System.err.println("*** server shut down");
+			}
+		});
+	}
+
+	private void stop() {
+		if (server != null) {
+			server.shutdown();
+		}
+	}
+
+	/**
+	 * Await termination on the main thread since the grpc library uses daemon
+	 * threads.
 	 */
-	private BlockingQueue<IssueReceiptRequest> requests;
+	private void blockUntilShutdown() throws InterruptedException {
+		if (server != null) {
+			server.awaitTermination();
+		}
+	}
+
+	/**
+	 * Main launches the server from the command line.
+	 */
+	public static void main(String[] args) throws IOException, InterruptedException {
+		String base = System.getProperty("user.dir") + "/demos/";
+		final BVerifyServer server = new BVerifyServer();
+		server.start();
+		server.blockUntilShutdown();
+	}
 	
+	private static class BVerifyServerImpl extends BVerifyAPIgRPC.base {
+		
+		
+		
+	}
+
 	public BVerifyServer(String base, String registryHost, int registryPort) {
 		this.pki = new PKIDirectory(base + "pki/");
 		System.out.println("loaded PKI");
-		this.rmi = new ClientProvider(registryHost, registryPort);
-		
-		// setup the shared data
-		this.adsManager = new ADSManager(base, this.pki);
-		this.requests = new LinkedBlockingQueue<>();
 
-		// setup the components 
-		
-		// this component runs as its own thread
-		BVerifyServerConfirmAndApply applierThread = 
-				new BVerifyServerConfirmAndApply(this.requests, this.adsManager, 
-						this.pki, this.rmi);
-		applierThread.start();
-		
-		// this is an object exposed to the RMI interface.
-		// the RMI library handles the threading and 
-		// may invoke multiple methods concurrently on this 
-		// object
-		BVerifyServerRequestVerifier verifierForRMI = 
-				new BVerifyServerRequestVerifier(this.requests, this.adsManager, this.rmi);
-		
-		// do an initial commitment 
+		// setup the components
+		this.adsManager = new ADSManager(base, this.pki);
+		this.approvalRequests = new HashMap<>();
+
+		// do an initial commitment
 		this.adsManager.commit();
-		
-		BVerifyProtocolServerAPI serverAPI;
-		try {
-			// port 0 = any free port
-			serverAPI = (BVerifyProtocolServerAPI) UnicastRemoteObject.exportObject(verifierForRMI, 0);
-			this.rmi.bindServer(serverAPI);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
+
 	}
-	
-	public static void main(String[] args) {
-		String base = System.getProperty("user.dir") + "/demos/";
-		String host = null;
-		int port = 1099;
-		// first create a registry
-		try {
-			System.setProperty("java.rmi.server.hostname", "18.85.22.252");
-			LocateRegistry.createRegistry(port);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
-		}
-		BVerifyServer server = new BVerifyServer(base, host, port);
-	}
+
 }

@@ -17,7 +17,7 @@ import crpyto.CryptographicUtils;
 import mpt.core.Utils;
 import mpt.set.MPTSetFull;
 import pki.Account;
-import serialization.generated.BVerifyAPIMessageSerialization.Receipt;
+import serialization.generated.BVerifyAPI.Receipt;
 
 /**
  * This class is used to create mock data

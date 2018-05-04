@@ -19,10 +19,15 @@ import mpt.set.AuthenticatedSetServer;
 import mpt.set.MPTSetFull;
 import pki.Account;
 import pki.PKIDirectory;
-import serialization.generated.BVerifyAPIMessageSerialization.Receipt;
+import serialization.generated.BVerifyAPI.Receipt;
 import serialization.generated.MptSerialization.MerklePrefixTrie;
 
 
+/**
+ * THREADSAFE
+ * @author henryaspegren
+ *
+ */
 public class ADSManager {
 
 	private final String adsDir;
