@@ -76,12 +76,12 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_PathResponse_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_PathResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_PathResponse_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_PathResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             io.grpc.bverify.PathResponse.class, io.grpc.bverify.PathResponse.Builder.class);
   }
@@ -272,12 +272,12 @@ private static final long serialVersionUID = 0L;
       io.grpc.bverify.PathResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_PathResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_PathResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_PathResponse_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_PathResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.grpc.bverify.PathResponse.class, io.grpc.bverify.PathResponse.Builder.class);
     }
@@ -310,7 +310,7 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_PathResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_PathResponse_descriptor;
     }
 
     public io.grpc.bverify.PathResponse getDefaultInstanceForType() {

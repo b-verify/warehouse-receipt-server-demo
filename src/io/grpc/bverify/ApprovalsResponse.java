@@ -76,12 +76,12 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_ApprovalsResponse_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_ApprovalsResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_ApprovalsResponse_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_ApprovalsResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             io.grpc.bverify.ApprovalsResponse.class, io.grpc.bverify.ApprovalsResponse.Builder.class);
   }
@@ -272,12 +272,12 @@ private static final long serialVersionUID = 0L;
       io.grpc.bverify.ApprovalsResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_ApprovalsResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ApprovalsResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_ApprovalsResponse_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_ApprovalsResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.grpc.bverify.ApprovalsResponse.class, io.grpc.bverify.ApprovalsResponse.Builder.class);
     }
@@ -310,7 +310,7 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_ApprovalsResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ApprovalsResponse_descriptor;
     }
 
     public io.grpc.bverify.ApprovalsResponse getDefaultInstanceForType() {

@@ -54,7 +54,7 @@ public class BootstrapMockSetup {
 		MPTSetFull ads1 = new MPTSetFull();
 		// add 3 random receipts 
 		for(int i = 0; i < 10; i++) {
-			Receipt randomReceipt = BootstrapMockSetup.generateReceipt(warehouse, alice);
+			io.grpc.bverify.Receipt randomReceipt = BootstrapMockSetup.generateReceipt(warehouse, alice);
 			byte[] witness = CryptographicUtils.witnessReceipt(randomReceipt);
 			File receiptFile = new File(ads1FileDir+i);
 			writeBytesToFile(receiptFile, randomReceipt.toByteArray());

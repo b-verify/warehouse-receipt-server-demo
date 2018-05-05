@@ -7,8 +7,9 @@ import java.util.logging.Logger;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.bverify.BVerifyServerAPIGrpc.BVerifyServerAPIImplBase;
+import io.grpc.bverify.IssueReceiptRequest;
 import pki.PKIDirectory;
-import serialization.generated.IssueReceiptRequest;;
 
 public class BVerifyServer {
 	private static final Logger logger = Logger.getLogger(BVerifyServer.class.getName());
@@ -32,7 +33,7 @@ public class BVerifyServer {
 	private void start() throws IOException {
 		/* The port on which the server should run */
 		int port = 50051;
-		server = ServerBuilder.forPort(port).addService(new GreeterImpl()).build().start();
+		server = ServerBuilder.forPort(port).addService(new BVerifyServerImpl()).build().start();
 		logger.info("Server started, listening on " + port);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -67,15 +68,39 @@ public class BVerifyServer {
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		String base = System.getProperty("user.dir") + "/demos/";
-		final BVerifyServer server = new BVerifyServer();
+		final BVerifyServer server = new BVerifyServer("", "", 1);
 		server.start();
 		server.blockUntilShutdown();
 	}
-	
-	private static class BVerifyServerImpl extends BVerifyAPIgRPC.base {
-		
-		
-		
+
+	private static class BVerifyServerImpl extends BVerifyServerAPIImplBase {
+
+		public void issueReceipt(io.grpc.bverify.IssueReceiptRequest request,
+				io.grpc.stub.StreamObserver<io.grpc.bverify.IssueReceiptResponse> responseObserver) {
+
+		}
+
+		@Override
+		public void getApprovalRequests(io.grpc.bverify.ApprovalsRequest request,
+				io.grpc.stub.StreamObserver<io.grpc.bverify.ApprovalsResponse> responseObserver) {
+			
+		}
+
+		@Override
+		public void submitSignature(io.grpc.bverify.SubmitSignatureRequest request,
+				io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitSignatureResponse> responseObserver) {
+		}
+
+		@Override
+		public void getDataRequest(io.grpc.bverify.DataRequest request,
+				io.grpc.stub.StreamObserver<io.grpc.bverify.DataResponse> responseObserver) {
+		}
+
+		@Override
+		public void getAuthPath(io.grpc.bverify.PathRequest request,
+				io.grpc.stub.StreamObserver<io.grpc.bverify.PathResponse> responseObserver) {
+		}
+
 	}
 
 	public BVerifyServer(String base, String registryHost, int registryPort) {

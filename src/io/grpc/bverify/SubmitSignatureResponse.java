@@ -69,12 +69,12 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_SubmitSignatureResponse_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             io.grpc.bverify.SubmitSignatureResponse.class, io.grpc.bverify.SubmitSignatureResponse.Builder.class);
   }
@@ -249,12 +249,12 @@ private static final long serialVersionUID = 0L;
       io.grpc.bverify.SubmitSignatureResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_SubmitSignatureResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.grpc.bverify.SubmitSignatureResponse.class, io.grpc.bverify.SubmitSignatureResponse.Builder.class);
     }
@@ -283,7 +283,7 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_SubmitSignatureResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
     }
 
     public io.grpc.bverify.SubmitSignatureResponse getDefaultInstanceForType() {

@@ -141,12 +141,12 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_Receipt_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_Receipt_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.BVerifyAPI.internal_static_api_Receipt_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_Receipt_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             io.grpc.bverify.Receipt.class, io.grpc.bverify.Receipt.Builder.class);
   }
@@ -705,12 +705,12 @@ private static final long serialVersionUID = 0L;
       io.grpc.bverify.ReceiptOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_Receipt_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_Receipt_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_Receipt_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_Receipt_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.grpc.bverify.Receipt.class, io.grpc.bverify.Receipt.Builder.class);
     }
@@ -759,7 +759,7 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.BVerifyAPI.internal_static_api_Receipt_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_Receipt_descriptor;
     }
 
     public io.grpc.bverify.Receipt getDefaultInstanceForType() {
