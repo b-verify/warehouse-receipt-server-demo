@@ -17,8 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private DataResponse() {
     receipts_ = java.util.Collections.emptyList();
-    commitmentNumber_ = 0;
-    commitment_ = com.google.protobuf.ByteString.EMPTY;
   }
 
   @java.lang.Override
@@ -61,16 +59,6 @@ private static final long serialVersionUID = 0L;
                 input.readMessage(io.grpc.bverify.Receipt.parser(), extensionRegistry));
             break;
           }
-          case 16: {
-
-            commitmentNumber_ = input.readInt32();
-            break;
-          }
-          case 26: {
-
-            commitment_ = input.readBytes();
-            break;
-          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -98,7 +86,6 @@ private static final long serialVersionUID = 0L;
             io.grpc.bverify.DataResponse.class, io.grpc.bverify.DataResponse.Builder.class);
   }
 
-  private int bitField0_;
   public static final int RECEIPTS_FIELD_NUMBER = 1;
   private java.util.List<io.grpc.bverify.Receipt> receipts_;
   /**
@@ -134,24 +121,6 @@ private static final long serialVersionUID = 0L;
     return receipts_.get(index);
   }
 
-  public static final int COMMITMENTNUMBER_FIELD_NUMBER = 2;
-  private int commitmentNumber_;
-  /**
-   * <code>int32 commitmentNumber = 2;</code>
-   */
-  public int getCommitmentNumber() {
-    return commitmentNumber_;
-  }
-
-  public static final int COMMITMENT_FIELD_NUMBER = 3;
-  private com.google.protobuf.ByteString commitment_;
-  /**
-   * <code>bytes commitment = 3;</code>
-   */
-  public com.google.protobuf.ByteString getCommitment() {
-    return commitment_;
-  }
-
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -167,12 +136,6 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < receipts_.size(); i++) {
       output.writeMessage(1, receipts_.get(i));
     }
-    if (commitmentNumber_ != 0) {
-      output.writeInt32(2, commitmentNumber_);
-    }
-    if (!commitment_.isEmpty()) {
-      output.writeBytes(3, commitment_);
-    }
     unknownFields.writeTo(output);
   }
 
@@ -184,14 +147,6 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < receipts_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, receipts_.get(i));
-    }
-    if (commitmentNumber_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(2, commitmentNumber_);
-    }
-    if (!commitment_.isEmpty()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(3, commitment_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -211,10 +166,6 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && getReceiptsList()
         .equals(other.getReceiptsList());
-    result = result && (getCommitmentNumber()
-        == other.getCommitmentNumber());
-    result = result && getCommitment()
-        .equals(other.getCommitment());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -230,10 +181,6 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + RECEIPTS_FIELD_NUMBER;
       hash = (53 * hash) + getReceiptsList().hashCode();
     }
-    hash = (37 * hash) + COMMITMENTNUMBER_FIELD_NUMBER;
-    hash = (53 * hash) + getCommitmentNumber();
-    hash = (37 * hash) + COMMITMENT_FIELD_NUMBER;
-    hash = (53 * hash) + getCommitment().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -370,10 +317,6 @@ private static final long serialVersionUID = 0L;
       } else {
         receiptsBuilder_.clear();
       }
-      commitmentNumber_ = 0;
-
-      commitment_ = com.google.protobuf.ByteString.EMPTY;
-
       return this;
     }
 
@@ -397,7 +340,6 @@ private static final long serialVersionUID = 0L;
     public io.grpc.bverify.DataResponse buildPartial() {
       io.grpc.bverify.DataResponse result = new io.grpc.bverify.DataResponse(this);
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
       if (receiptsBuilder_ == null) {
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           receipts_ = java.util.Collections.unmodifiableList(receipts_);
@@ -407,9 +349,6 @@ private static final long serialVersionUID = 0L;
       } else {
         result.receipts_ = receiptsBuilder_.build();
       }
-      result.commitmentNumber_ = commitmentNumber_;
-      result.commitment_ = commitment_;
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -476,12 +415,6 @@ private static final long serialVersionUID = 0L;
             receiptsBuilder_.addAllMessages(other.receipts_);
           }
         }
-      }
-      if (other.getCommitmentNumber() != 0) {
-        setCommitmentNumber(other.getCommitmentNumber());
-      }
-      if (other.getCommitment() != com.google.protobuf.ByteString.EMPTY) {
-        setCommitment(other.getCommitment());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -749,61 +682,6 @@ private static final long serialVersionUID = 0L;
         receipts_ = null;
       }
       return receiptsBuilder_;
-    }
-
-    private int commitmentNumber_ ;
-    /**
-     * <code>int32 commitmentNumber = 2;</code>
-     */
-    public int getCommitmentNumber() {
-      return commitmentNumber_;
-    }
-    /**
-     * <code>int32 commitmentNumber = 2;</code>
-     */
-    public Builder setCommitmentNumber(int value) {
-      
-      commitmentNumber_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>int32 commitmentNumber = 2;</code>
-     */
-    public Builder clearCommitmentNumber() {
-      
-      commitmentNumber_ = 0;
-      onChanged();
-      return this;
-    }
-
-    private com.google.protobuf.ByteString commitment_ = com.google.protobuf.ByteString.EMPTY;
-    /**
-     * <code>bytes commitment = 3;</code>
-     */
-    public com.google.protobuf.ByteString getCommitment() {
-      return commitment_;
-    }
-    /**
-     * <code>bytes commitment = 3;</code>
-     */
-    public Builder setCommitment(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      commitment_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>bytes commitment = 3;</code>
-     */
-    public Builder clearCommitment() {
-      
-      commitment_ = getDefaultInstance().getCommitment();
-      onChanged();
-      return this;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

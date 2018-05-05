@@ -216,6 +216,43 @@ public final class BVerifyServerAPIGrpc {
      }
      return getGetAuthPathMethod;
   }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getGetCommitmentsMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<io.grpc.bverify.CommitmentsRequest,
+      io.grpc.bverify.CommitmentsResponse> METHOD_GET_COMMITMENTS = getGetCommitmentsMethodHelper();
+
+  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.CommitmentsRequest,
+      io.grpc.bverify.CommitmentsResponse> getGetCommitmentsMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<io.grpc.bverify.CommitmentsRequest,
+      io.grpc.bverify.CommitmentsResponse> getGetCommitmentsMethod() {
+    return getGetCommitmentsMethodHelper();
+  }
+
+  private static io.grpc.MethodDescriptor<io.grpc.bverify.CommitmentsRequest,
+      io.grpc.bverify.CommitmentsResponse> getGetCommitmentsMethodHelper() {
+    io.grpc.MethodDescriptor<io.grpc.bverify.CommitmentsRequest, io.grpc.bverify.CommitmentsResponse> getGetCommitmentsMethod;
+    if ((getGetCommitmentsMethod = BVerifyServerAPIGrpc.getGetCommitmentsMethod) == null) {
+      synchronized (BVerifyServerAPIGrpc.class) {
+        if ((getGetCommitmentsMethod = BVerifyServerAPIGrpc.getGetCommitmentsMethod) == null) {
+          BVerifyServerAPIGrpc.getGetCommitmentsMethod = getGetCommitmentsMethod = 
+              io.grpc.MethodDescriptor.<io.grpc.bverify.CommitmentsRequest, io.grpc.bverify.CommitmentsResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "api.BVerifyServerAPI", "GetCommitments"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.grpc.bverify.CommitmentsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.grpc.bverify.CommitmentsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("GetCommitments"))
+                  .build();
+          }
+        }
+     }
+     return getGetCommitmentsMethod;
+  }
 
   /**
    * Creates a new async stub that supports all call types for the service
@@ -283,6 +320,16 @@ public final class BVerifyServerAPIGrpc {
       asyncUnimplementedUnaryCall(getGetAuthPathMethodHelper(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * only really should be used if no Catena witnessing 
+     * </pre>
+     */
+    public void getCommitments(io.grpc.bverify.CommitmentsRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.CommitmentsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCommitmentsMethodHelper(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -320,6 +367,13 @@ public final class BVerifyServerAPIGrpc {
                 io.grpc.bverify.PathRequest,
                 io.grpc.bverify.PathResponse>(
                   this, METHODID_GET_AUTH_PATH)))
+          .addMethod(
+            getGetCommitmentsMethodHelper(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                io.grpc.bverify.CommitmentsRequest,
+                io.grpc.bverify.CommitmentsResponse>(
+                  this, METHODID_GET_COMMITMENTS)))
           .build();
     }
   }
@@ -385,6 +439,17 @@ public final class BVerifyServerAPIGrpc {
       asyncUnaryCall(
           getChannel().newCall(getGetAuthPathMethodHelper(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * only really should be used if no Catena witnessing 
+     * </pre>
+     */
+    public void getCommitments(io.grpc.bverify.CommitmentsRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.CommitmentsResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCommitmentsMethodHelper(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -442,6 +507,16 @@ public final class BVerifyServerAPIGrpc {
     public io.grpc.bverify.PathResponse getAuthPath(io.grpc.bverify.PathRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetAuthPathMethodHelper(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * only really should be used if no Catena witnessing 
+     * </pre>
+     */
+    public io.grpc.bverify.CommitmentsResponse getCommitments(io.grpc.bverify.CommitmentsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCommitmentsMethodHelper(), getCallOptions(), request);
     }
   }
 
@@ -506,6 +581,17 @@ public final class BVerifyServerAPIGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetAuthPathMethodHelper(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * only really should be used if no Catena witnessing 
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.CommitmentsResponse> getCommitments(
+        io.grpc.bverify.CommitmentsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCommitmentsMethodHelper(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_FORWARD = 0;
@@ -513,6 +599,7 @@ public final class BVerifyServerAPIGrpc {
   private static final int METHODID_SUBMIT = 2;
   private static final int METHODID_GET_DATA_REQUEST = 3;
   private static final int METHODID_GET_AUTH_PATH = 4;
+  private static final int METHODID_GET_COMMITMENTS = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -550,6 +637,10 @@ public final class BVerifyServerAPIGrpc {
         case METHODID_GET_AUTH_PATH:
           serviceImpl.getAuthPath((io.grpc.bverify.PathRequest) request,
               (io.grpc.stub.StreamObserver<io.grpc.bverify.PathResponse>) responseObserver);
+          break;
+        case METHODID_GET_COMMITMENTS:
+          serviceImpl.getCommitments((io.grpc.bverify.CommitmentsRequest) request,
+              (io.grpc.stub.StreamObserver<io.grpc.bverify.CommitmentsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -617,6 +708,7 @@ public final class BVerifyServerAPIGrpc {
               .addMethod(getSubmitMethodHelper())
               .addMethod(getGetDataRequestMethodHelper())
               .addMethod(getGetAuthPathMethodHelper())
+              .addMethod(getGetCommitmentsMethodHelper())
               .build();
         }
       }

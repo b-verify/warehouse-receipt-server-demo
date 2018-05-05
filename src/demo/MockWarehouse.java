@@ -1,7 +1,5 @@
 package demo;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,14 +8,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
-import api.BVerifyProtocolClientAPI;
 import crpyto.CryptographicSignature;
 import crpyto.CryptographicUtils;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.bverify.BVerifyServerAPIGrpc;
+import io.grpc.bverify.BVerifyServerAPIGrpc.BVerifyServerAPIBlockingStub;
+import io.grpc.bverify.CommitmentsRequest;
+import io.grpc.bverify.CommitmentsResponse;
+import io.grpc.bverify.DataRequest;
+import io.grpc.bverify.DataResponse;
+import io.grpc.bverify.ForwardRequest;
+import io.grpc.bverify.IssueReceiptRequest;
+import io.grpc.bverify.PathRequest;
+import io.grpc.bverify.PathResponse;
+import io.grpc.bverify.Receipt;
 import mpt.core.InsufficientAuthenticationDataException;
 import mpt.core.InvalidSerializationException;
 import mpt.core.Utils;
@@ -27,106 +38,88 @@ import mpt.set.AuthenticatedSetServer;
 import mpt.set.MPTSetFull;
 import pki.Account;
 import pki.PKIDirectory;
-import rmi.ClientProvider;
-import serialization.generated.BVerifyAPIMessageSerialization.ADSData;
-import serialization.generated.BVerifyAPIMessageSerialization.AuthProof;
-import serialization.generated.BVerifyAPIMessageSerialization.IssueReceiptRequest;
-import serialization.generated.BVerifyAPIMessageSerialization.Receipt;
-import serialization.generated.BVerifyAPIMessageSerialization.Signature;
 
-public class MockWarehouse implements BVerifyProtocolClientAPI {
+public class MockWarehouse {
+	private static final Logger logger = Logger.getLogger(MockWarehouse.class.getName());
 
 	private final Account account;
+	
 	private final List<Account> depositors;
-	private final ClientProvider rmi;
+	
+	// data
 	private final Map<String, AuthenticatedSetServer> adsKeyToADS;
 	private final Map<String, Set<Receipt>> adsKeyToADSData;
 
 	private AuthenticatedDictionaryClient authADS;
-	private int currentCommitmentNumber;
+	
+	// witnessing 
 	private byte[] currentCommitment;
+	private int currentCommitmentNumber;
+	
+	// gRPC
+	private final ManagedChannel channel;
+	private final BVerifyServerAPIBlockingStub blockingStub;
 	
 	public MockWarehouse(Account thisWarehouse, 
 			List<Account> depositors, String host, int port) {
+		logger.log(Level.INFO, "...loading mock warehouse connected to server on host: "+host+" port: "+port);
+
+		this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+	    this.blockingStub = BVerifyServerAPIGrpc.newBlockingStub(channel);
+
+	    
 		this.account = thisWarehouse;
 		this.depositors = depositors;
-		System.out.println("loading mock warehouse "+thisWarehouse.getFirstName());
-		System.out.println("with clients: ");
+		logger.log(Level.INFO, "...loading mock warehouse "+thisWarehouse.getFirstName());
+		logger.log(Level.INFO, "...with clients: ");
 		for(Account a : depositors) {
-			System.out.println(a.getFirstName());
+			logger.log(Level.INFO, "..."+a.getFirstName());
 		}
 		assert this.account.getADSKeys().size() == this.depositors.size();
-		this.rmi = new ClientProvider(host, port);		
-		BVerifyProtocolClientAPI clientStub;
-		try {
-			// port 0 = any free port
-			clientStub = (BVerifyProtocolClientAPI) UnicastRemoteObject.exportObject(this, 0);
-			this.rmi.getServer().bindClient(this.account.getIdAsString(), clientStub);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
+		logger.log(Level.INFO, "...cares about adses: "+
+				this.account.getADSKeys().stream().map(x -> 
+					Utils.byteArrayAsHexString(x)).collect(Collectors.toList()));
+
+		logger.log(Level.INFO, "...getting commitments from server");
+		List<byte[]> commitments = this.getCommitments();
+		this.currentCommitmentNumber = commitments.size()-1;
+		this.currentCommitment = commitments.get(this.currentCommitmentNumber);
+		
+		logger.log(Level.INFO, "...current commitment: #"+this.currentCommitmentNumber+" - "+
+				Utils.byteArrayAsHexString(this.currentCommitment));
 		
 		this.adsKeyToADS = new HashMap<>();
 		this.adsKeyToADSData = new HashMap<>();
-		try {
-			// first ask for the receipts and current commitment
-			for(byte[] adsKey : this.account.getADSKeys()) {
-				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
-				MPTSetFull ads = new MPTSetFull();
-				Set<Receipt> adsData = new HashSet<>();
-				byte[] recieptDataBytes = this.rmi.getServer().getReceipts(adsKey);
-				ADSData receiptDataMsg = ADSData.parseFrom(recieptDataBytes);
-				for(Receipt r : receiptDataMsg.getReceiptsList()) {
-					adsData.add(r);
-					byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
-					ads.insert(receiptWitness);
-				}
-				System.out.println("added "+adsData.size()+" receipts");
-				this.currentCommitment = receiptDataMsg.getCommitment().toByteArray();
-				this.currentCommitmentNumber = receiptDataMsg.getCommitmentNumber();
-				this.adsKeyToADS.put(adsKeyString, ads);
-				this.adsKeyToADSData.put(adsKeyString, adsData);
+		for(byte[] adsKey : this.account.getADSKeys()) {
+			String adsKeyString = Utils.byteArrayAsHexString(adsKey);
+			logger.log(Level.INFO, "...asking for data from the server for ads: "+adsKeyString);
+			MPTSetFull ads = new MPTSetFull();
+			Set<Receipt> adsData = new HashSet<>();
+			List<Receipt> receipts = this.getDataRequest(adsKey, this.currentCommitmentNumber);
+			for(Receipt r : receipts) {
+				adsData.add(r);
+				byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
+				ads.insert(receiptWitness);
 			}
-
-			// next ask for the auth paths
-			System.out.println("asking for the authentication proof");
-			List<byte[]> keys = this.account.getADSKeys().stream().collect(Collectors.toList());
-			byte[] pathBytes = this.rmi.getServer().getAuthPath(keys, this.currentCommitmentNumber);
-			AuthProof authproof = AuthProof.parseFrom(pathBytes);
-			this.authADS = MPTDictionaryPartial.deserialize(authproof.getPath());
-			
-			// check that the auth proof is correct
-			for (byte[] adsKey : this.account.getADSKeys()) {
-				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
-				if(!Arrays.equals(this.authADS.get(adsKey), 
-						this.adsKeyToADS.get(adsKeyString).commitment())){
-					throw new RuntimeException("sever returned invalid proof!");
-				}
-			}
-			
-			System.out.println("verified! warehouse client is ready");
-		}catch(Exception e) {
-			throw new RuntimeException("cannot parse response from server");
+			logger.log(Level.INFO, "...added "+adsData.size()+" receipts");
+			this.adsKeyToADS.put(adsKeyString, ads);
+			this.adsKeyToADSData.put(adsKeyString, adsData);
 		}
+		
+		logger.log(Level.INFO, "...asking for a proof, checking latest commitment");
+		this.checkCommitment(this.currentCommitment, this.currentCommitmentNumber);
+		logger.log(Level.INFO, "...setup complete!");
 	}
 	
-	@Override
-	public byte[] approveDeposit(byte[] request) throws RemoteException {
-		throw new RuntimeException("warehouse in demo only submits approved deposits");
-	}
-	
+
 	
 	public void deposit(Account depositor) {
 		this.deposit(BootstrapMockSetup.generateReceipt(this.account, depositor), depositor);
 	}
 	
 	public void deposit(Receipt r, Account depositor) {
-		System.out.println("Depositing receipt: "+r+" to "+depositor.getFirstName());
-		List<Account> accounts = new ArrayList<>();
-		accounts.add(this.account);
-		accounts.add(depositor);
-		byte[] adsId = CryptographicUtils.listOfAccountsToADSKey(accounts);
+		logger.log(Level.INFO, "...depositing receipt: "+r+" to "+depositor.getFirstName());
+		byte[] adsId = CryptographicUtils.listOfAccountsToADSKey(Arrays.asList(this.account, depositor));
 		String adsIdString = Utils.byteArrayAsHexString(adsId);
 		if(!this.adsKeyToADS.containsKey(adsIdString)) {
 			throw new RuntimeException("not a valid depositor");
@@ -136,65 +129,84 @@ public class MockWarehouse implements BVerifyProtocolClientAPI {
 		adsData.add(r);
 		byte[] receiptWitness = CryptographicUtils.witnessReceipt(r);
 		ads.insert(receiptWitness);
-		byte[] newAdsRoot = ads.commitment();
-		System.out.println("new ads root: "+Utils.byteArrayAsHexString(newAdsRoot));
-		byte[] signature = CryptographicSignature.sign(newAdsRoot, this.account.getPrivateKey());
+		byte[] newRoot = ads.commitment();
+		logger.log(Level.INFO, "...new ads root: "+Utils.byteArrayAsHexString(newRoot));
+		byte[] signature = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());
 		
 		IssueReceiptRequest request = IssueReceiptRequest.newBuilder()
-				.setIssuerId(this.account.getIdAsString())
-				.setRecepientId(depositor.getIdAsString())
 				.setReceipt(r)
-				.setSignature(Signature.newBuilder()
-						.setSignerId(this.account.getIdAsString())
-						.setSignature(ByteString.copyFrom(signature))
-				)
+				.setSignatureWarehouse(ByteString.copyFrom(signature))
 				.build();
 		
-		// invoke on the server
-		try {
-			System.out.println("sending to server");
-			this.rmi.getServer().issueReceipt(request.toByteArray());
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw new RuntimeException("can't invoke receipt issue method on server");
-		}
-		
+		ForwardRequest requestToForward = ForwardRequest.newBuilder()
+				.setRequest(request)
+				.setForwardToId(depositor.getIdAsString())
+				.build();
+		logger.log(Level.INFO, "...forwarding request to client via server");
+		this.blockingStub.forward(requestToForward);
 	}
 
-	@Override
-	public void addNewCommitment(byte[] commitment) throws RemoteException {
-		// add the commitment 
-		this.currentCommitmentNumber = this.currentCommitmentNumber+1;
-		this.currentCommitment = commitment;
+	
+	private List<byte[]> getCommitments() {
+		CommitmentsRequest request = CommitmentsRequest.newBuilder().build();
+		CommitmentsResponse response = this.blockingStub.getCommitments(request);
+		return response.getCommitmentsList().stream().map(x -> x.toByteArray()).collect(Collectors.toList());
+	}
+	
+	
+	private List<Receipt> getDataRequest(byte[] adsId, int commitmentNumber){
+		DataRequest request = DataRequest.newBuilder()
+				.setAdsId(ByteString.copyFrom(adsId))
+				.setCommitmentNumber(commitmentNumber)
+				.build();
+		DataResponse response = this.blockingStub.getDataRequest(request);
+		return response.getReceiptsList();
 		
-		// ask the server for a proof!
-		List<byte[]> keys = this.account.getADSKeys().stream().collect(Collectors.toList());
-		byte[] respBytes = this.rmi.getServer().getAuthPath(keys, this.currentCommitmentNumber);
+	}
+	
+	private MPTDictionaryPartial getPath(List<byte[]> adsIds, int commitment) {
+		PathRequest request = PathRequest.newBuilder()
+				.setCommitmentNumber(commitment)
+				.addAllAdsIds(adsIds.stream().map(x -> ByteString.copyFrom(x)).collect(Collectors.toList()))
+				.build();
+		PathResponse response = this.blockingStub.getAuthPath(request);
+		MPTDictionaryPartial res;
 		try {
-			AuthProof proof = AuthProof.parseFrom(respBytes);
-			MPTDictionaryPartial mpt = MPTDictionaryPartial.deserialize(proof.getPath());
-			System.out.println("------ checking commitment matches----------");
-			if(!Arrays.equals(mpt.commitment(), this.currentCommitment)) {
-				throw new RuntimeException("commitment in proof does not match");
-			}
-			// check that the auth proof is correct
-			for(byte[] adsKey : this.account.getADSKeys()) {
-				String adsKeyString = Utils.byteArrayAsHexString(adsKey);
-				System.out.println("------ checking ADS"+adsKeyString+"----------");
+			res = MPTDictionaryPartial.deserialize(response.getPath());
+		} catch (InvalidSerializationException e) {
+			e.printStackTrace();
+			throw new RuntimeException("MPT cannot be deserialized");
+		}
+		return res;
+	}
+	
+	
+	private boolean checkCommitment(byte[] commitment, int commitmentNumber) {
+		logger.log(Level.INFO, "...checking commtiment# : "+commitmentNumber);
+		logger.log(Level.INFO, "...asking for proof from the server");
+		List<byte[]> adsKeys = this.account.getADSKeys().stream().collect(Collectors.toList());
+		MPTDictionaryPartial mpt = this.getPath(adsKeys, this.currentCommitmentNumber);
+		logger.log(Level.INFO, "...checking proof");
+		// check that the auth proof is correct
+		try {
+			for(byte[] adsKey : adsKeys) {
+				String adsKeystring = Utils.byteArrayAsHexString(adsKey);
 				if(!Arrays.equals(mpt.get(adsKey), 
-						this.adsKeyToADS.get(adsKeyString).commitment())){
-					throw new RuntimeException("sever returned invalid proof!");
+						this.adsKeyToADS.get(adsKeystring).commitment())){
+					// for now just throw error, but really should return false isntead
+					throw new RuntimeException("data does not match");
 				}
 			}
-			// updating ADS
-			System.out.println("------ update accepted!----------");
-			this.authADS = mpt;
-		} catch (InvalidProtocolBufferException | InvalidSerializationException | 
-				InsufficientAuthenticationDataException e) {
+			if(!Arrays.equals(commitment, mpt.commitment())) {
+				throw new RuntimeException("commitment does not match");
+			}
+		} catch (InsufficientAuthenticationDataException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("bad proof!");
 		}
+		return true;
 	}
+
 	
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";

@@ -30,14 +30,4 @@ public interface DataResponseOrBuilder extends
    */
   io.grpc.bverify.ReceiptOrBuilder getReceiptsOrBuilder(
       int index);
-
-  /**
-   * <code>int32 commitmentNumber = 2;</code>
-   */
-  int getCommitmentNumber();
-
-  /**
-   * <code>bytes commitment = 3;</code>
-   */
-  com.google.protobuf.ByteString getCommitment();
 }

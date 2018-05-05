@@ -17,6 +17,7 @@ import crpyto.CryptographicUtils;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.bverify.BVerifyServerAPIGrpc.BVerifyServerAPIImplBase;
+import io.grpc.bverify.CommitmentsResponse;
 import io.grpc.bverify.IssueReceiptRequest;
 import io.grpc.bverify.Receipt;
 import mpt.core.Utils;
@@ -204,12 +205,8 @@ public class BVerifyServer {
 				io.grpc.stub.StreamObserver<io.grpc.bverify.DataResponse> responseObserver) {
 			logger.log(Level.INFO, "GetDataRequest("+Utils.byteArrayAsHexString(request.getAdsId().toByteArray())+")");
 			Set<io.grpc.bverify.Receipt> adsData = this.adsManager.getADSData(request.getAdsId().toByteArray());
-			int commitmentNumber = this.adsManager.getCurrentCommitmentNumber();
-			byte[] commitment = this.adsManager.getCommitment(commitmentNumber);
 			io.grpc.bverify.DataResponse response = io.grpc.bverify.DataResponse.newBuilder()
 					.addAllReceipts(adsData)
-					.setCommitmentNumber(commitmentNumber)
-					.setCommitment(ByteString.copyFrom(commitment))
 					.build();
 			responseObserver.onNext(response);
 			responseObserver.onCompleted();
@@ -227,6 +224,20 @@ public class BVerifyServer {
 					.setPath(proof)
 					.build();
 			responseObserver.onNext(response);
+			responseObserver.onCompleted();
+		}
+		
+		@Override
+		public void getCommitments(io.grpc.bverify.CommitmentsRequest request,
+		        io.grpc.stub.StreamObserver<io.grpc.bverify.CommitmentsResponse> responseObserver) {
+			logger.log(Level.INFO, "GetCommitments()");
+			CommitmentsResponse.Builder responseBuilder = CommitmentsResponse.newBuilder();
+			int numberOfCommitments = this.adsManager.getCurrentCommitmentNumber();
+			for(int i = 0; i < numberOfCommitments; i++) {
+				byte[] commitment = this.adsManager.getCommitment(i);
+				responseBuilder.addCommitments(ByteString.copyFrom(commitment));
+			}
+			responseObserver.onNext(responseBuilder.build());
 			responseObserver.onCompleted();
 		}
 

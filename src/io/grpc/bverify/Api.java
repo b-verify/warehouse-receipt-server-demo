@@ -65,6 +65,16 @@ public final class Api {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_api_PathResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_api_CommitmentsRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_api_CommitmentsRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_api_CommitmentsResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_api_CommitmentsResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_api_IssueReceiptRequest_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -93,29 +103,31 @@ public final class Api {
       "\n\007request\030\001 \001(\0132\030.api.IssueReceiptReques" +
       "t\"\"\n\016SubmitResponse\022\020\n\010accepted\030\001 \001(\010\"6\n" +
       "\013DataRequest\022\r\n\005adsId\030\001 \001(\014\022\030\n\020commitmen" +
-      "tNumber\030\002 \001(\005\"\\\n\014DataResponse\022\036\n\010receipt" +
-      "s\030\001 \003(\0132\014.api.Receipt\022\030\n\020commitmentNumbe" +
-      "r\030\002 \001(\005\022\022\n\ncommitment\030\003 \001(\014\"7\n\013PathReque" +
-      "st\022\016\n\006adsIds\030\001 \003(\014\022\030\n\020commitmentNumber\030\002" +
-      " \001(\005\"G\n\014PathResponse\0227\n\004path\030\001 \001(\0132).ser" +
-      "ialization.generated.MerklePrefixTrie\"n\n" +
-      "\023IssueReceiptRequest\022\035\n\007receipt\030\001 \001(\0132\014." +
-      "api.Receipt\022\033\n\023signature_warehouse\030\002 \001(\014" +
-      "\022\033\n\023signature_depositor\030\003 \001(\014\"\316\001\n\007Receip" +
-      "t\022\024\n\014warehouse_id\030\001 \001(\t\022\024\n\014depositor_id\030" +
-      "\002 \001(\t\022\022\n\naccountant\030\003 \001(\t\022\020\n\010category\030\004 " +
-      "\001(\t\022\014\n\004date\030\005 \001(\t\022\021\n\tinsurance\030\006 \001(\t\022\016\n\006" +
-      "weight\030\007 \001(\001\022\016\n\006volume\030\010 \001(\001\022\020\n\010humidity" +
-      "\030\t \001(\001\022\r\n\005price\030\n \001(\001\022\017\n\007details\030\013 \001(\t2\265" +
-      "\002\n\020BVerifyServerAPI\0226\n\007Forward\022\023.api.For" +
-      "wardRequest\032\024.api.ForwardResponse\"\000\022E\n\014G" +
-      "etForwarded\022\030.api.GetForwardedRequest\032\031." +
-      "api.GetForwardedResponse\"\000\0223\n\006Submit\022\022.a" +
-      "pi.SubmitRequest\032\023.api.SubmitResponse\"\000\022" +
-      "7\n\016GetDataRequest\022\020.api.DataRequest\032\021.ap" +
-      "i.DataResponse\"\000\0224\n\013GetAuthPath\022\020.api.Pa" +
-      "thRequest\032\021.api.PathResponse\"\000B\023\n\017io.grp" +
-      "c.bverifyP\001b\006proto3"
+      "tNumber\030\002 \001(\005\".\n\014DataResponse\022\036\n\010receipt" +
+      "s\030\001 \003(\0132\014.api.Receipt\"7\n\013PathRequest\022\016\n\006" +
+      "adsIds\030\001 \003(\014\022\030\n\020commitmentNumber\030\002 \001(\005\"G" +
+      "\n\014PathResponse\0227\n\004path\030\001 \001(\0132).serializa" +
+      "tion.generated.MerklePrefixTrie\"\024\n\022Commi" +
+      "tmentsRequest\"*\n\023CommitmentsResponse\022\023\n\013" +
+      "commitments\030\001 \003(\014\"n\n\023IssueReceiptRequest" +
+      "\022\035\n\007receipt\030\001 \001(\0132\014.api.Receipt\022\033\n\023signa" +
+      "ture_warehouse\030\002 \001(\014\022\033\n\023signature_deposi" +
+      "tor\030\003 \001(\014\"\316\001\n\007Receipt\022\024\n\014warehouse_id\030\001 " +
+      "\001(\t\022\024\n\014depositor_id\030\002 \001(\t\022\022\n\naccountant\030" +
+      "\003 \001(\t\022\020\n\010category\030\004 \001(\t\022\014\n\004date\030\005 \001(\t\022\021\n" +
+      "\tinsurance\030\006 \001(\t\022\016\n\006weight\030\007 \001(\001\022\016\n\006volu" +
+      "me\030\010 \001(\001\022\020\n\010humidity\030\t \001(\001\022\r\n\005price\030\n \001(" +
+      "\001\022\017\n\007details\030\013 \001(\t2\374\002\n\020BVerifyServerAPI\022" +
+      "6\n\007Forward\022\023.api.ForwardRequest\032\024.api.Fo" +
+      "rwardResponse\"\000\022E\n\014GetForwarded\022\030.api.Ge" +
+      "tForwardedRequest\032\031.api.GetForwardedResp" +
+      "onse\"\000\0223\n\006Submit\022\022.api.SubmitRequest\032\023.a" +
+      "pi.SubmitResponse\"\000\0227\n\016GetDataRequest\022\020." +
+      "api.DataRequest\032\021.api.DataResponse\"\000\0224\n\013" +
+      "GetAuthPath\022\020.api.PathRequest\032\021.api.Path" +
+      "Response\"\000\022E\n\016GetCommitments\022\027.api.Commi" +
+      "tmentsRequest\032\030.api.CommitmentsResponse\"" +
+      "\000B\023\n\017io.grpc.bverifyP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -177,7 +189,7 @@ public final class Api {
     internal_static_api_DataResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_api_DataResponse_descriptor,
-        new java.lang.String[] { "Receipts", "CommitmentNumber", "Commitment", });
+        new java.lang.String[] { "Receipts", });
     internal_static_api_PathRequest_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_api_PathRequest_fieldAccessorTable = new
@@ -190,14 +202,26 @@ public final class Api {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_api_PathResponse_descriptor,
         new java.lang.String[] { "Path", });
-    internal_static_api_IssueReceiptRequest_descriptor =
+    internal_static_api_CommitmentsRequest_descriptor =
       getDescriptor().getMessageTypes().get(10);
+    internal_static_api_CommitmentsRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_api_CommitmentsRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_api_CommitmentsResponse_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_api_CommitmentsResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_api_CommitmentsResponse_descriptor,
+        new java.lang.String[] { "Commitments", });
+    internal_static_api_IssueReceiptRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
     internal_static_api_IssueReceiptRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_api_IssueReceiptRequest_descriptor,
         new java.lang.String[] { "Receipt", "SignatureWarehouse", "SignatureDepositor", });
     internal_static_api_Receipt_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_api_Receipt_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_api_Receipt_descriptor,

@@ -28,6 +28,10 @@ service BVerifyServerAPI {
 	rpc GetDataRequest(DataRequest) returns (DataResponse) {}
 
 	rpc GetAuthPath(PathRequest) returns (PathResponse) {}
+	
+	// only really should be used if no Catena witnessing 
+	rpc GetCommitments(CommitmentsRequest) returns (CommitmentsResponse) {}
+	
 
 }
 
@@ -64,8 +68,6 @@ message DataRequest {
 
 message DataResponse {
 	repeated Receipt receipts = 1;
-	int32 commitmentNumber = 2;
-	bytes commitment = 3;
 }
 
 message PathRequest {
@@ -76,6 +78,19 @@ message PathRequest {
 message PathResponse {
 	serialization.generated.MerklePrefixTrie path = 1;
 }
+
+message CommitmentsRequest {
+
+}
+
+message CommitmentsResponse {
+	repeated bytes commitments = 1;
+}
+
+
+
+
+
 
 
 
