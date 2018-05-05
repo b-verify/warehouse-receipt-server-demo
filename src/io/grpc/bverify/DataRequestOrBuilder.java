@@ -8,17 +8,9 @@ public interface DataRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>repeated bytes adsIds = 1;</code>
+   * <code>bytes adsId = 1;</code>
    */
-  java.util.List<com.google.protobuf.ByteString> getAdsIdsList();
-  /**
-   * <code>repeated bytes adsIds = 1;</code>
-   */
-  int getAdsIdsCount();
-  /**
-   * <code>repeated bytes adsIds = 1;</code>
-   */
-  com.google.protobuf.ByteString getAdsIds(int index);
+  com.google.protobuf.ByteString getAdsId();
 
   /**
    * <code>int32 commitmentNumber = 2;</code>

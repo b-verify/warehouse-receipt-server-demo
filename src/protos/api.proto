@@ -19,48 +19,46 @@ package api;
 */
 service BVerifyServerAPI {
 	
-	rpc IssueReceipt(IssueReceiptRequest) returns (IssueReceiptResponse) {}
+	rpc Forward(ForwardRequest) returns (ForwardResponse) {}
 	
-	rpc GetApprovalRequests(ApprovalsRequest) returns (ApprovalsResponse) {}
+	rpc GetForwarded(GetForwardedRequest) returns (GetForwardedResponse) {}
 	
-	rpc SubmitSignature(SubmitSignatureRequest) returns (SubmitSignatureResponse) {}
-	
+	rpc Submit(SubmitRequest) returns (SubmitResponse) {}
+		
 	rpc GetDataRequest(DataRequest) returns (DataResponse) {}
 
 	rpc GetAuthPath(PathRequest) returns (PathResponse) {}
 
 }
 
-message IssueReceiptRequest {
-	string issuer_id = 1;
-	string recepient_id = 2;
-	Receipt receipt = 3;
-	Signature signature = 4;
+
+message ForwardRequest {
+	IssueReceiptRequest request = 1;
+	string forward_to_id = 2;
 }
 
-message IssueReceiptResponse{
-	bool scheduled = 1;
+message ForwardResponse {
+	bool added = 1;
 }
 
-message ApprovalsRequest{
+message GetForwardedRequest {
 	string id = 1;
 }
 
-message ApprovalsResponse{
+message GetForwardedResponse {
 	IssueReceiptRequest request = 1;
 }
 
-message SubmitSignatureRequest {
+message SubmitRequest{
 	IssueReceiptRequest request = 1;
-	Signature signature = 2;
 }
 
-message SubmitSignatureResponse {
+message SubmitResponse{
 	bool accepted = 1;
 }
 
 message DataRequest {
-	repeated bytes adsIds = 1;
+	bytes adsId = 1;
 	int32 commitmentNumber = 2;
 }
 
@@ -79,12 +77,12 @@ message PathResponse {
 	serialization.generated.MerklePrefixTrie path = 1;
 }
 
-/**
-*  Signature  
-*/
-message Signature {
-	string signer_id = 1;
-	bytes signature = 2;
+
+
+message IssueReceiptRequest {
+	Receipt receipt = 1;
+	bytes signature_warehouse = 2;
+	bytes signature_depositor = 3;
 }
 
 /**

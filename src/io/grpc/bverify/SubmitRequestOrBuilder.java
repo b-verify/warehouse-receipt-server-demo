@@ -3,8 +3,8 @@
 
 package io.grpc.bverify;
 
-public interface ApprovalsResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:api.ApprovalsResponse)
+public interface SubmitRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:api.SubmitRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**

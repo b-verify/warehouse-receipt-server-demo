@@ -4,18 +4,18 @@
 package io.grpc.bverify;
 
 /**
- * Protobuf type {@code api.SubmitSignatureResponse}
+ * Protobuf type {@code api.SubmitResponse}
  */
-public  final class SubmitSignatureResponse extends
+public  final class SubmitResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:api.SubmitSignatureResponse)
-    SubmitSignatureResponseOrBuilder {
+    // @@protoc_insertion_point(message_implements:api.SubmitResponse)
+    SubmitResponseOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use SubmitSignatureResponse.newBuilder() to construct.
-  private SubmitSignatureResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use SubmitResponse.newBuilder() to construct.
+  private SubmitResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private SubmitSignatureResponse() {
+  private SubmitResponse() {
     accepted_ = false;
   }
 
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private SubmitSignatureResponse(
+  private SubmitResponse(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -69,14 +69,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_SubmitResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_SubmitResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.grpc.bverify.SubmitSignatureResponse.class, io.grpc.bverify.SubmitSignatureResponse.Builder.class);
+            io.grpc.bverify.SubmitResponse.class, io.grpc.bverify.SubmitResponse.Builder.class);
   }
 
   public static final int ACCEPTED_FIELD_NUMBER = 1;
@@ -125,10 +125,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.grpc.bverify.SubmitSignatureResponse)) {
+    if (!(obj instanceof io.grpc.bverify.SubmitResponse)) {
       return super.equals(obj);
     }
-    io.grpc.bverify.SubmitSignatureResponse other = (io.grpc.bverify.SubmitSignatureResponse) obj;
+    io.grpc.bverify.SubmitResponse other = (io.grpc.bverify.SubmitResponse) obj;
 
     boolean result = true;
     result = result && (getAccepted()
@@ -152,69 +152,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(byte[] data)
+  public static io.grpc.bverify.SubmitResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(java.io.InputStream input)
+  public static io.grpc.bverify.SubmitResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseDelimitedFrom(java.io.InputStream input)
+  public static io.grpc.bverify.SubmitResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseDelimitedFrom(
+  public static io.grpc.bverify.SubmitResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.SubmitSignatureResponse parseFrom(
+  public static io.grpc.bverify.SubmitResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -226,7 +226,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.grpc.bverify.SubmitSignatureResponse prototype) {
+  public static Builder newBuilder(io.grpc.bverify.SubmitResponse prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -241,25 +241,25 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code api.SubmitSignatureResponse}
+   * Protobuf type {@code api.SubmitResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:api.SubmitSignatureResponse)
-      io.grpc.bverify.SubmitSignatureResponseOrBuilder {
+      // @@protoc_insertion_point(builder_implements:api.SubmitResponse)
+      io.grpc.bverify.SubmitResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_SubmitResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_SubmitResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.grpc.bverify.SubmitSignatureResponse.class, io.grpc.bverify.SubmitSignatureResponse.Builder.class);
+              io.grpc.bverify.SubmitResponse.class, io.grpc.bverify.SubmitResponse.Builder.class);
     }
 
-    // Construct using io.grpc.bverify.SubmitSignatureResponse.newBuilder()
+    // Construct using io.grpc.bverify.SubmitResponse.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -283,23 +283,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.Api.internal_static_api_SubmitSignatureResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_SubmitResponse_descriptor;
     }
 
-    public io.grpc.bverify.SubmitSignatureResponse getDefaultInstanceForType() {
-      return io.grpc.bverify.SubmitSignatureResponse.getDefaultInstance();
+    public io.grpc.bverify.SubmitResponse getDefaultInstanceForType() {
+      return io.grpc.bverify.SubmitResponse.getDefaultInstance();
     }
 
-    public io.grpc.bverify.SubmitSignatureResponse build() {
-      io.grpc.bverify.SubmitSignatureResponse result = buildPartial();
+    public io.grpc.bverify.SubmitResponse build() {
+      io.grpc.bverify.SubmitResponse result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public io.grpc.bverify.SubmitSignatureResponse buildPartial() {
-      io.grpc.bverify.SubmitSignatureResponse result = new io.grpc.bverify.SubmitSignatureResponse(this);
+    public io.grpc.bverify.SubmitResponse buildPartial() {
+      io.grpc.bverify.SubmitResponse result = new io.grpc.bverify.SubmitResponse(this);
       result.accepted_ = accepted_;
       onBuilt();
       return result;
@@ -332,16 +332,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.grpc.bverify.SubmitSignatureResponse) {
-        return mergeFrom((io.grpc.bverify.SubmitSignatureResponse)other);
+      if (other instanceof io.grpc.bverify.SubmitResponse) {
+        return mergeFrom((io.grpc.bverify.SubmitResponse)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.grpc.bverify.SubmitSignatureResponse other) {
-      if (other == io.grpc.bverify.SubmitSignatureResponse.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.grpc.bverify.SubmitResponse other) {
+      if (other == io.grpc.bverify.SubmitResponse.getDefaultInstance()) return this;
       if (other.getAccepted() != false) {
         setAccepted(other.getAccepted());
       }
@@ -358,11 +358,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.grpc.bverify.SubmitSignatureResponse parsedMessage = null;
+      io.grpc.bverify.SubmitResponse parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.grpc.bverify.SubmitSignatureResponse) e.getUnfinishedMessage();
+        parsedMessage = (io.grpc.bverify.SubmitResponse) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -408,39 +408,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:api.SubmitSignatureResponse)
+    // @@protoc_insertion_point(builder_scope:api.SubmitResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:api.SubmitSignatureResponse)
-  private static final io.grpc.bverify.SubmitSignatureResponse DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:api.SubmitResponse)
+  private static final io.grpc.bverify.SubmitResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.grpc.bverify.SubmitSignatureResponse();
+    DEFAULT_INSTANCE = new io.grpc.bverify.SubmitResponse();
   }
 
-  public static io.grpc.bverify.SubmitSignatureResponse getDefaultInstance() {
+  public static io.grpc.bverify.SubmitResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<SubmitSignatureResponse>
-      PARSER = new com.google.protobuf.AbstractParser<SubmitSignatureResponse>() {
-    public SubmitSignatureResponse parsePartialFrom(
+  private static final com.google.protobuf.Parser<SubmitResponse>
+      PARSER = new com.google.protobuf.AbstractParser<SubmitResponse>() {
+    public SubmitResponse parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new SubmitSignatureResponse(input, extensionRegistry);
+      return new SubmitResponse(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<SubmitSignatureResponse> parser() {
+  public static com.google.protobuf.Parser<SubmitResponse> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<SubmitSignatureResponse> getParserForType() {
+  public com.google.protobuf.Parser<SubmitResponse> getParserForType() {
     return PARSER;
   }
 
-  public io.grpc.bverify.SubmitSignatureResponse getDefaultInstanceForType() {
+  public io.grpc.bverify.SubmitResponse getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

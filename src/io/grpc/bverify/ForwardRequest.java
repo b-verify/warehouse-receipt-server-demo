@@ -4,25 +4,19 @@
 package io.grpc.bverify;
 
 /**
- * <pre>
- **
- *  Signature  
- * </pre>
- *
- * Protobuf type {@code api.Signature}
+ * Protobuf type {@code api.ForwardRequest}
  */
-public  final class Signature extends
+public  final class ForwardRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:api.Signature)
-    SignatureOrBuilder {
+    // @@protoc_insertion_point(message_implements:api.ForwardRequest)
+    ForwardRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use Signature.newBuilder() to construct.
-  private Signature(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ForwardRequest.newBuilder() to construct.
+  private ForwardRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private Signature() {
-    signerId_ = "";
-    signature_ = com.google.protobuf.ByteString.EMPTY;
+  private ForwardRequest() {
+    forwardToId_ = "";
   }
 
   @java.lang.Override
@@ -30,7 +24,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private Signature(
+  private ForwardRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -57,14 +51,22 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+            io.grpc.bverify.IssueReceiptRequest.Builder subBuilder = null;
+            if (request_ != null) {
+              subBuilder = request_.toBuilder();
+            }
+            request_ = input.readMessage(io.grpc.bverify.IssueReceiptRequest.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(request_);
+              request_ = subBuilder.buildPartial();
+            }
 
-            signerId_ = s;
             break;
           }
           case 18: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            signature_ = input.readBytes();
+            forwardToId_ = s;
             break;
           }
         }
@@ -81,57 +83,69 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.Api.internal_static_api_Signature_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_ForwardRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.Api.internal_static_api_Signature_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_ForwardRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.grpc.bverify.Signature.class, io.grpc.bverify.Signature.Builder.class);
+            io.grpc.bverify.ForwardRequest.class, io.grpc.bverify.ForwardRequest.Builder.class);
   }
 
-  public static final int SIGNER_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object signerId_;
+  public static final int REQUEST_FIELD_NUMBER = 1;
+  private io.grpc.bverify.IssueReceiptRequest request_;
   /**
-   * <code>string signer_id = 1;</code>
+   * <code>.api.IssueReceiptRequest request = 1;</code>
    */
-  public java.lang.String getSignerId() {
-    java.lang.Object ref = signerId_;
+  public boolean hasRequest() {
+    return request_ != null;
+  }
+  /**
+   * <code>.api.IssueReceiptRequest request = 1;</code>
+   */
+  public io.grpc.bverify.IssueReceiptRequest getRequest() {
+    return request_ == null ? io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
+  }
+  /**
+   * <code>.api.IssueReceiptRequest request = 1;</code>
+   */
+  public io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder() {
+    return getRequest();
+  }
+
+  public static final int FORWARD_TO_ID_FIELD_NUMBER = 2;
+  private volatile java.lang.Object forwardToId_;
+  /**
+   * <code>string forward_to_id = 2;</code>
+   */
+  public java.lang.String getForwardToId() {
+    java.lang.Object ref = forwardToId_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      signerId_ = s;
+      forwardToId_ = s;
       return s;
     }
   }
   /**
-   * <code>string signer_id = 1;</code>
+   * <code>string forward_to_id = 2;</code>
    */
   public com.google.protobuf.ByteString
-      getSignerIdBytes() {
-    java.lang.Object ref = signerId_;
+      getForwardToIdBytes() {
+    java.lang.Object ref = forwardToId_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      signerId_ = b;
+      forwardToId_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
-  }
-
-  public static final int SIGNATURE_FIELD_NUMBER = 2;
-  private com.google.protobuf.ByteString signature_;
-  /**
-   * <code>bytes signature = 2;</code>
-   */
-  public com.google.protobuf.ByteString getSignature() {
-    return signature_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -146,11 +160,11 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getSignerIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, signerId_);
+    if (request_ != null) {
+      output.writeMessage(1, getRequest());
     }
-    if (!signature_.isEmpty()) {
-      output.writeBytes(2, signature_);
+    if (!getForwardToIdBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, forwardToId_);
     }
     unknownFields.writeTo(output);
   }
@@ -160,12 +174,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getSignerIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, signerId_);
-    }
-    if (!signature_.isEmpty()) {
+    if (request_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(2, signature_);
+        .computeMessageSize(1, getRequest());
+    }
+    if (!getForwardToIdBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, forwardToId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -177,16 +191,19 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.grpc.bverify.Signature)) {
+    if (!(obj instanceof io.grpc.bverify.ForwardRequest)) {
       return super.equals(obj);
     }
-    io.grpc.bverify.Signature other = (io.grpc.bverify.Signature) obj;
+    io.grpc.bverify.ForwardRequest other = (io.grpc.bverify.ForwardRequest) obj;
 
     boolean result = true;
-    result = result && getSignerId()
-        .equals(other.getSignerId());
-    result = result && getSignature()
-        .equals(other.getSignature());
+    result = result && (hasRequest() == other.hasRequest());
+    if (hasRequest()) {
+      result = result && getRequest()
+          .equals(other.getRequest());
+    }
+    result = result && getForwardToId()
+        .equals(other.getForwardToId());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -198,78 +215,80 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + SIGNER_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getSignerId().hashCode();
-    hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
-    hash = (53 * hash) + getSignature().hashCode();
+    if (hasRequest()) {
+      hash = (37 * hash) + REQUEST_FIELD_NUMBER;
+      hash = (53 * hash) + getRequest().hashCode();
+    }
+    hash = (37 * hash) + FORWARD_TO_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getForwardToId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.Signature parseFrom(byte[] data)
+  public static io.grpc.bverify.ForwardRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.Signature parseFrom(java.io.InputStream input)
+  public static io.grpc.bverify.ForwardRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.Signature parseDelimitedFrom(java.io.InputStream input)
+  public static io.grpc.bverify.ForwardRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.Signature parseDelimitedFrom(
+  public static io.grpc.bverify.ForwardRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.Signature parseFrom(
+  public static io.grpc.bverify.ForwardRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -281,7 +300,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.grpc.bverify.Signature prototype) {
+  public static Builder newBuilder(io.grpc.bverify.ForwardRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -296,30 +315,25 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * <pre>
-   **
-   *  Signature  
-   * </pre>
-   *
-   * Protobuf type {@code api.Signature}
+   * Protobuf type {@code api.ForwardRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:api.Signature)
-      io.grpc.bverify.SignatureOrBuilder {
+      // @@protoc_insertion_point(builder_implements:api.ForwardRequest)
+      io.grpc.bverify.ForwardRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.Api.internal_static_api_Signature_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ForwardRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.Api.internal_static_api_Signature_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_ForwardRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.grpc.bverify.Signature.class, io.grpc.bverify.Signature.Builder.class);
+              io.grpc.bverify.ForwardRequest.class, io.grpc.bverify.ForwardRequest.Builder.class);
     }
 
-    // Construct using io.grpc.bverify.Signature.newBuilder()
+    // Construct using io.grpc.bverify.ForwardRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -336,34 +350,42 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      signerId_ = "";
-
-      signature_ = com.google.protobuf.ByteString.EMPTY;
+      if (requestBuilder_ == null) {
+        request_ = null;
+      } else {
+        request_ = null;
+        requestBuilder_ = null;
+      }
+      forwardToId_ = "";
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.Api.internal_static_api_Signature_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ForwardRequest_descriptor;
     }
 
-    public io.grpc.bverify.Signature getDefaultInstanceForType() {
-      return io.grpc.bverify.Signature.getDefaultInstance();
+    public io.grpc.bverify.ForwardRequest getDefaultInstanceForType() {
+      return io.grpc.bverify.ForwardRequest.getDefaultInstance();
     }
 
-    public io.grpc.bverify.Signature build() {
-      io.grpc.bverify.Signature result = buildPartial();
+    public io.grpc.bverify.ForwardRequest build() {
+      io.grpc.bverify.ForwardRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public io.grpc.bverify.Signature buildPartial() {
-      io.grpc.bverify.Signature result = new io.grpc.bverify.Signature(this);
-      result.signerId_ = signerId_;
-      result.signature_ = signature_;
+    public io.grpc.bverify.ForwardRequest buildPartial() {
+      io.grpc.bverify.ForwardRequest result = new io.grpc.bverify.ForwardRequest(this);
+      if (requestBuilder_ == null) {
+        result.request_ = request_;
+      } else {
+        result.request_ = requestBuilder_.build();
+      }
+      result.forwardToId_ = forwardToId_;
       onBuilt();
       return result;
     }
@@ -395,22 +417,22 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.grpc.bverify.Signature) {
-        return mergeFrom((io.grpc.bverify.Signature)other);
+      if (other instanceof io.grpc.bverify.ForwardRequest) {
+        return mergeFrom((io.grpc.bverify.ForwardRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.grpc.bverify.Signature other) {
-      if (other == io.grpc.bverify.Signature.getDefaultInstance()) return this;
-      if (!other.getSignerId().isEmpty()) {
-        signerId_ = other.signerId_;
-        onChanged();
+    public Builder mergeFrom(io.grpc.bverify.ForwardRequest other) {
+      if (other == io.grpc.bverify.ForwardRequest.getDefaultInstance()) return this;
+      if (other.hasRequest()) {
+        mergeRequest(other.getRequest());
       }
-      if (other.getSignature() != com.google.protobuf.ByteString.EMPTY) {
-        setSignature(other.getSignature());
+      if (!other.getForwardToId().isEmpty()) {
+        forwardToId_ = other.forwardToId_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -425,11 +447,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.grpc.bverify.Signature parsedMessage = null;
+      io.grpc.bverify.ForwardRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.grpc.bverify.Signature) e.getUnfinishedMessage();
+        parsedMessage = (io.grpc.bverify.ForwardRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -439,100 +461,188 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object signerId_ = "";
+    private io.grpc.bverify.IssueReceiptRequest request_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder> requestBuilder_;
     /**
-     * <code>string signer_id = 1;</code>
+     * <code>.api.IssueReceiptRequest request = 1;</code>
      */
-    public java.lang.String getSignerId() {
-      java.lang.Object ref = signerId_;
+    public boolean hasRequest() {
+      return requestBuilder_ != null || request_ != null;
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public io.grpc.bverify.IssueReceiptRequest getRequest() {
+      if (requestBuilder_ == null) {
+        return request_ == null ? io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
+      } else {
+        return requestBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public Builder setRequest(io.grpc.bverify.IssueReceiptRequest value) {
+      if (requestBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        request_ = value;
+        onChanged();
+      } else {
+        requestBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public Builder setRequest(
+        io.grpc.bverify.IssueReceiptRequest.Builder builderForValue) {
+      if (requestBuilder_ == null) {
+        request_ = builderForValue.build();
+        onChanged();
+      } else {
+        requestBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public Builder mergeRequest(io.grpc.bverify.IssueReceiptRequest value) {
+      if (requestBuilder_ == null) {
+        if (request_ != null) {
+          request_ =
+            io.grpc.bverify.IssueReceiptRequest.newBuilder(request_).mergeFrom(value).buildPartial();
+        } else {
+          request_ = value;
+        }
+        onChanged();
+      } else {
+        requestBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public Builder clearRequest() {
+      if (requestBuilder_ == null) {
+        request_ = null;
+        onChanged();
+      } else {
+        request_ = null;
+        requestBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public io.grpc.bverify.IssueReceiptRequest.Builder getRequestBuilder() {
+      
+      onChanged();
+      return getRequestFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    public io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder() {
+      if (requestBuilder_ != null) {
+        return requestBuilder_.getMessageOrBuilder();
+      } else {
+        return request_ == null ?
+            io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
+      }
+    }
+    /**
+     * <code>.api.IssueReceiptRequest request = 1;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder> 
+        getRequestFieldBuilder() {
+      if (requestBuilder_ == null) {
+        requestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder>(
+                getRequest(),
+                getParentForChildren(),
+                isClean());
+        request_ = null;
+      }
+      return requestBuilder_;
+    }
+
+    private java.lang.Object forwardToId_ = "";
+    /**
+     * <code>string forward_to_id = 2;</code>
+     */
+    public java.lang.String getForwardToId() {
+      java.lang.Object ref = forwardToId_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        signerId_ = s;
+        forwardToId_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string signer_id = 1;</code>
+     * <code>string forward_to_id = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getSignerIdBytes() {
-      java.lang.Object ref = signerId_;
+        getForwardToIdBytes() {
+      java.lang.Object ref = forwardToId_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        signerId_ = b;
+        forwardToId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string signer_id = 1;</code>
+     * <code>string forward_to_id = 2;</code>
      */
-    public Builder setSignerId(
+    public Builder setForwardToId(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      signerId_ = value;
+      forwardToId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string signer_id = 1;</code>
+     * <code>string forward_to_id = 2;</code>
      */
-    public Builder clearSignerId() {
+    public Builder clearForwardToId() {
       
-      signerId_ = getDefaultInstance().getSignerId();
+      forwardToId_ = getDefaultInstance().getForwardToId();
       onChanged();
       return this;
     }
     /**
-     * <code>string signer_id = 1;</code>
+     * <code>string forward_to_id = 2;</code>
      */
-    public Builder setSignerIdBytes(
+    public Builder setForwardToIdBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      signerId_ = value;
-      onChanged();
-      return this;
-    }
-
-    private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
-    /**
-     * <code>bytes signature = 2;</code>
-     */
-    public com.google.protobuf.ByteString getSignature() {
-      return signature_;
-    }
-    /**
-     * <code>bytes signature = 2;</code>
-     */
-    public Builder setSignature(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      signature_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>bytes signature = 2;</code>
-     */
-    public Builder clearSignature() {
-      
-      signature_ = getDefaultInstance().getSignature();
+      forwardToId_ = value;
       onChanged();
       return this;
     }
@@ -547,39 +657,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:api.Signature)
+    // @@protoc_insertion_point(builder_scope:api.ForwardRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:api.Signature)
-  private static final io.grpc.bverify.Signature DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:api.ForwardRequest)
+  private static final io.grpc.bverify.ForwardRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.grpc.bverify.Signature();
+    DEFAULT_INSTANCE = new io.grpc.bverify.ForwardRequest();
   }
 
-  public static io.grpc.bverify.Signature getDefaultInstance() {
+  public static io.grpc.bverify.ForwardRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<Signature>
-      PARSER = new com.google.protobuf.AbstractParser<Signature>() {
-    public Signature parsePartialFrom(
+  private static final com.google.protobuf.Parser<ForwardRequest>
+      PARSER = new com.google.protobuf.AbstractParser<ForwardRequest>() {
+    public ForwardRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new Signature(input, extensionRegistry);
+      return new ForwardRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<Signature> parser() {
+  public static com.google.protobuf.Parser<ForwardRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<Signature> getParserForType() {
+  public com.google.protobuf.Parser<ForwardRequest> getParserForType() {
     return PARSER;
   }
 
-  public io.grpc.bverify.Signature getDefaultInstanceForType() {
+  public io.grpc.bverify.ForwardRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

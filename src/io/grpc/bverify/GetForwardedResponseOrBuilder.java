@@ -3,8 +3,8 @@
 
 package io.grpc.bverify;
 
-public interface SubmitSignatureRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:api.SubmitSignatureRequest)
+public interface GetForwardedResponseOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:api.GetForwardedResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -19,17 +19,4 @@ public interface SubmitSignatureRequestOrBuilder extends
    * <code>.api.IssueReceiptRequest request = 1;</code>
    */
   io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder();
-
-  /**
-   * <code>.api.Signature signature = 2;</code>
-   */
-  boolean hasSignature();
-  /**
-   * <code>.api.Signature signature = 2;</code>
-   */
-  io.grpc.bverify.Signature getSignature();
-  /**
-   * <code>.api.Signature signature = 2;</code>
-   */
-  io.grpc.bverify.SignatureOrBuilder getSignatureOrBuilder();
 }

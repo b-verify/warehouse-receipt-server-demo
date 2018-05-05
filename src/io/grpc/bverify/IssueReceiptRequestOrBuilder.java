@@ -8,48 +8,25 @@ public interface IssueReceiptRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string issuer_id = 1;</code>
-   */
-  java.lang.String getIssuerId();
-  /**
-   * <code>string issuer_id = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getIssuerIdBytes();
-
-  /**
-   * <code>string recepient_id = 2;</code>
-   */
-  java.lang.String getRecepientId();
-  /**
-   * <code>string recepient_id = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getRecepientIdBytes();
-
-  /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   boolean hasReceipt();
   /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   io.grpc.bverify.Receipt getReceipt();
   /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   io.grpc.bverify.ReceiptOrBuilder getReceiptOrBuilder();
 
   /**
-   * <code>.api.Signature signature = 4;</code>
+   * <code>bytes signature_warehouse = 2;</code>
    */
-  boolean hasSignature();
+  com.google.protobuf.ByteString getSignatureWarehouse();
+
   /**
-   * <code>.api.Signature signature = 4;</code>
+   * <code>bytes signature_depositor = 3;</code>
    */
-  io.grpc.bverify.Signature getSignature();
-  /**
-   * <code>.api.Signature signature = 4;</code>
-   */
-  io.grpc.bverify.SignatureOrBuilder getSignatureOrBuilder();
+  com.google.protobuf.ByteString getSignatureDepositor();
 }

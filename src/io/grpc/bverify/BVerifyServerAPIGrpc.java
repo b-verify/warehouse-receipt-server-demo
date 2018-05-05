@@ -32,115 +32,115 @@ public final class BVerifyServerAPIGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  @java.lang.Deprecated // Use {@link #getIssueReceiptMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<io.grpc.bverify.IssueReceiptRequest,
-      io.grpc.bverify.IssueReceiptResponse> METHOD_ISSUE_RECEIPT = getIssueReceiptMethodHelper();
+  @java.lang.Deprecated // Use {@link #getForwardMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<io.grpc.bverify.ForwardRequest,
+      io.grpc.bverify.ForwardResponse> METHOD_FORWARD = getForwardMethodHelper();
 
-  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.IssueReceiptRequest,
-      io.grpc.bverify.IssueReceiptResponse> getIssueReceiptMethod;
+  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.ForwardRequest,
+      io.grpc.bverify.ForwardResponse> getForwardMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<io.grpc.bverify.IssueReceiptRequest,
-      io.grpc.bverify.IssueReceiptResponse> getIssueReceiptMethod() {
-    return getIssueReceiptMethodHelper();
+  public static io.grpc.MethodDescriptor<io.grpc.bverify.ForwardRequest,
+      io.grpc.bverify.ForwardResponse> getForwardMethod() {
+    return getForwardMethodHelper();
   }
 
-  private static io.grpc.MethodDescriptor<io.grpc.bverify.IssueReceiptRequest,
-      io.grpc.bverify.IssueReceiptResponse> getIssueReceiptMethodHelper() {
-    io.grpc.MethodDescriptor<io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptResponse> getIssueReceiptMethod;
-    if ((getIssueReceiptMethod = BVerifyServerAPIGrpc.getIssueReceiptMethod) == null) {
+  private static io.grpc.MethodDescriptor<io.grpc.bverify.ForwardRequest,
+      io.grpc.bverify.ForwardResponse> getForwardMethodHelper() {
+    io.grpc.MethodDescriptor<io.grpc.bverify.ForwardRequest, io.grpc.bverify.ForwardResponse> getForwardMethod;
+    if ((getForwardMethod = BVerifyServerAPIGrpc.getForwardMethod) == null) {
       synchronized (BVerifyServerAPIGrpc.class) {
-        if ((getIssueReceiptMethod = BVerifyServerAPIGrpc.getIssueReceiptMethod) == null) {
-          BVerifyServerAPIGrpc.getIssueReceiptMethod = getIssueReceiptMethod = 
-              io.grpc.MethodDescriptor.<io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptResponse>newBuilder()
+        if ((getForwardMethod = BVerifyServerAPIGrpc.getForwardMethod) == null) {
+          BVerifyServerAPIGrpc.getForwardMethod = getForwardMethod = 
+              io.grpc.MethodDescriptor.<io.grpc.bverify.ForwardRequest, io.grpc.bverify.ForwardResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "api.BVerifyServerAPI", "IssueReceipt"))
+                  "api.BVerifyServerAPI", "Forward"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.IssueReceiptRequest.getDefaultInstance()))
+                  io.grpc.bverify.ForwardRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.IssueReceiptResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("IssueReceipt"))
+                  io.grpc.bverify.ForwardResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("Forward"))
                   .build();
           }
         }
      }
-     return getIssueReceiptMethod;
+     return getForwardMethod;
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  @java.lang.Deprecated // Use {@link #getGetApprovalRequestsMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<io.grpc.bverify.ApprovalsRequest,
-      io.grpc.bverify.ApprovalsResponse> METHOD_GET_APPROVAL_REQUESTS = getGetApprovalRequestsMethodHelper();
+  @java.lang.Deprecated // Use {@link #getGetForwardedMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<io.grpc.bverify.GetForwardedRequest,
+      io.grpc.bverify.GetForwardedResponse> METHOD_GET_FORWARDED = getGetForwardedMethodHelper();
 
-  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.ApprovalsRequest,
-      io.grpc.bverify.ApprovalsResponse> getGetApprovalRequestsMethod;
+  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.GetForwardedRequest,
+      io.grpc.bverify.GetForwardedResponse> getGetForwardedMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<io.grpc.bverify.ApprovalsRequest,
-      io.grpc.bverify.ApprovalsResponse> getGetApprovalRequestsMethod() {
-    return getGetApprovalRequestsMethodHelper();
+  public static io.grpc.MethodDescriptor<io.grpc.bverify.GetForwardedRequest,
+      io.grpc.bverify.GetForwardedResponse> getGetForwardedMethod() {
+    return getGetForwardedMethodHelper();
   }
 
-  private static io.grpc.MethodDescriptor<io.grpc.bverify.ApprovalsRequest,
-      io.grpc.bverify.ApprovalsResponse> getGetApprovalRequestsMethodHelper() {
-    io.grpc.MethodDescriptor<io.grpc.bverify.ApprovalsRequest, io.grpc.bverify.ApprovalsResponse> getGetApprovalRequestsMethod;
-    if ((getGetApprovalRequestsMethod = BVerifyServerAPIGrpc.getGetApprovalRequestsMethod) == null) {
+  private static io.grpc.MethodDescriptor<io.grpc.bverify.GetForwardedRequest,
+      io.grpc.bverify.GetForwardedResponse> getGetForwardedMethodHelper() {
+    io.grpc.MethodDescriptor<io.grpc.bverify.GetForwardedRequest, io.grpc.bverify.GetForwardedResponse> getGetForwardedMethod;
+    if ((getGetForwardedMethod = BVerifyServerAPIGrpc.getGetForwardedMethod) == null) {
       synchronized (BVerifyServerAPIGrpc.class) {
-        if ((getGetApprovalRequestsMethod = BVerifyServerAPIGrpc.getGetApprovalRequestsMethod) == null) {
-          BVerifyServerAPIGrpc.getGetApprovalRequestsMethod = getGetApprovalRequestsMethod = 
-              io.grpc.MethodDescriptor.<io.grpc.bverify.ApprovalsRequest, io.grpc.bverify.ApprovalsResponse>newBuilder()
+        if ((getGetForwardedMethod = BVerifyServerAPIGrpc.getGetForwardedMethod) == null) {
+          BVerifyServerAPIGrpc.getGetForwardedMethod = getGetForwardedMethod = 
+              io.grpc.MethodDescriptor.<io.grpc.bverify.GetForwardedRequest, io.grpc.bverify.GetForwardedResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "api.BVerifyServerAPI", "GetApprovalRequests"))
+                  "api.BVerifyServerAPI", "GetForwarded"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.ApprovalsRequest.getDefaultInstance()))
+                  io.grpc.bverify.GetForwardedRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.ApprovalsResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("GetApprovalRequests"))
+                  io.grpc.bverify.GetForwardedResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("GetForwarded"))
                   .build();
           }
         }
      }
-     return getGetApprovalRequestsMethod;
+     return getGetForwardedMethod;
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  @java.lang.Deprecated // Use {@link #getSubmitSignatureMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<io.grpc.bverify.SubmitSignatureRequest,
-      io.grpc.bverify.SubmitSignatureResponse> METHOD_SUBMIT_SIGNATURE = getSubmitSignatureMethodHelper();
+  @java.lang.Deprecated // Use {@link #getSubmitMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<io.grpc.bverify.SubmitRequest,
+      io.grpc.bverify.SubmitResponse> METHOD_SUBMIT = getSubmitMethodHelper();
 
-  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.SubmitSignatureRequest,
-      io.grpc.bverify.SubmitSignatureResponse> getSubmitSignatureMethod;
+  private static volatile io.grpc.MethodDescriptor<io.grpc.bverify.SubmitRequest,
+      io.grpc.bverify.SubmitResponse> getSubmitMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<io.grpc.bverify.SubmitSignatureRequest,
-      io.grpc.bverify.SubmitSignatureResponse> getSubmitSignatureMethod() {
-    return getSubmitSignatureMethodHelper();
+  public static io.grpc.MethodDescriptor<io.grpc.bverify.SubmitRequest,
+      io.grpc.bverify.SubmitResponse> getSubmitMethod() {
+    return getSubmitMethodHelper();
   }
 
-  private static io.grpc.MethodDescriptor<io.grpc.bverify.SubmitSignatureRequest,
-      io.grpc.bverify.SubmitSignatureResponse> getSubmitSignatureMethodHelper() {
-    io.grpc.MethodDescriptor<io.grpc.bverify.SubmitSignatureRequest, io.grpc.bverify.SubmitSignatureResponse> getSubmitSignatureMethod;
-    if ((getSubmitSignatureMethod = BVerifyServerAPIGrpc.getSubmitSignatureMethod) == null) {
+  private static io.grpc.MethodDescriptor<io.grpc.bverify.SubmitRequest,
+      io.grpc.bverify.SubmitResponse> getSubmitMethodHelper() {
+    io.grpc.MethodDescriptor<io.grpc.bverify.SubmitRequest, io.grpc.bverify.SubmitResponse> getSubmitMethod;
+    if ((getSubmitMethod = BVerifyServerAPIGrpc.getSubmitMethod) == null) {
       synchronized (BVerifyServerAPIGrpc.class) {
-        if ((getSubmitSignatureMethod = BVerifyServerAPIGrpc.getSubmitSignatureMethod) == null) {
-          BVerifyServerAPIGrpc.getSubmitSignatureMethod = getSubmitSignatureMethod = 
-              io.grpc.MethodDescriptor.<io.grpc.bverify.SubmitSignatureRequest, io.grpc.bverify.SubmitSignatureResponse>newBuilder()
+        if ((getSubmitMethod = BVerifyServerAPIGrpc.getSubmitMethod) == null) {
+          BVerifyServerAPIGrpc.getSubmitMethod = getSubmitMethod = 
+              io.grpc.MethodDescriptor.<io.grpc.bverify.SubmitRequest, io.grpc.bverify.SubmitResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "api.BVerifyServerAPI", "SubmitSignature"))
+                  "api.BVerifyServerAPI", "Submit"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.SubmitSignatureRequest.getDefaultInstance()))
+                  io.grpc.bverify.SubmitRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.grpc.bverify.SubmitSignatureResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("SubmitSignature"))
+                  io.grpc.bverify.SubmitResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new BVerifyServerAPIMethodDescriptorSupplier("Submit"))
                   .build();
           }
         }
      }
-     return getSubmitSignatureMethod;
+     return getSubmitMethod;
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getGetDataRequestMethod()} instead. 
@@ -250,23 +250,23 @@ public final class BVerifyServerAPIGrpc {
 
     /**
      */
-    public void issueReceipt(io.grpc.bverify.IssueReceiptRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.IssueReceiptResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getIssueReceiptMethodHelper(), responseObserver);
+    public void forward(io.grpc.bverify.ForwardRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.ForwardResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getForwardMethodHelper(), responseObserver);
     }
 
     /**
      */
-    public void getApprovalRequests(io.grpc.bverify.ApprovalsRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.ApprovalsResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetApprovalRequestsMethodHelper(), responseObserver);
+    public void getForwarded(io.grpc.bverify.GetForwardedRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.GetForwardedResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetForwardedMethodHelper(), responseObserver);
     }
 
     /**
      */
-    public void submitSignature(io.grpc.bverify.SubmitSignatureRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitSignatureResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getSubmitSignatureMethodHelper(), responseObserver);
+    public void submit(io.grpc.bverify.SubmitRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getSubmitMethodHelper(), responseObserver);
     }
 
     /**
@@ -286,26 +286,26 @@ public final class BVerifyServerAPIGrpc {
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getIssueReceiptMethodHelper(),
+            getForwardMethodHelper(),
             asyncUnaryCall(
               new MethodHandlers<
-                io.grpc.bverify.IssueReceiptRequest,
-                io.grpc.bverify.IssueReceiptResponse>(
-                  this, METHODID_ISSUE_RECEIPT)))
+                io.grpc.bverify.ForwardRequest,
+                io.grpc.bverify.ForwardResponse>(
+                  this, METHODID_FORWARD)))
           .addMethod(
-            getGetApprovalRequestsMethodHelper(),
+            getGetForwardedMethodHelper(),
             asyncUnaryCall(
               new MethodHandlers<
-                io.grpc.bverify.ApprovalsRequest,
-                io.grpc.bverify.ApprovalsResponse>(
-                  this, METHODID_GET_APPROVAL_REQUESTS)))
+                io.grpc.bverify.GetForwardedRequest,
+                io.grpc.bverify.GetForwardedResponse>(
+                  this, METHODID_GET_FORWARDED)))
           .addMethod(
-            getSubmitSignatureMethodHelper(),
+            getSubmitMethodHelper(),
             asyncUnaryCall(
               new MethodHandlers<
-                io.grpc.bverify.SubmitSignatureRequest,
-                io.grpc.bverify.SubmitSignatureResponse>(
-                  this, METHODID_SUBMIT_SIGNATURE)))
+                io.grpc.bverify.SubmitRequest,
+                io.grpc.bverify.SubmitResponse>(
+                  this, METHODID_SUBMIT)))
           .addMethod(
             getGetDataRequestMethodHelper(),
             asyncUnaryCall(
@@ -348,26 +348,26 @@ public final class BVerifyServerAPIGrpc {
 
     /**
      */
-    public void issueReceipt(io.grpc.bverify.IssueReceiptRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.IssueReceiptResponse> responseObserver) {
+    public void forward(io.grpc.bverify.ForwardRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.ForwardResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getIssueReceiptMethodHelper(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getForwardMethodHelper(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getApprovalRequests(io.grpc.bverify.ApprovalsRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.ApprovalsResponse> responseObserver) {
+    public void getForwarded(io.grpc.bverify.GetForwardedRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.GetForwardedResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetApprovalRequestsMethodHelper(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetForwardedMethodHelper(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void submitSignature(io.grpc.bverify.SubmitSignatureRequest request,
-        io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitSignatureResponse> responseObserver) {
+    public void submit(io.grpc.bverify.SubmitRequest request,
+        io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSubmitSignatureMethodHelper(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getSubmitMethodHelper(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -411,23 +411,23 @@ public final class BVerifyServerAPIGrpc {
 
     /**
      */
-    public io.grpc.bverify.IssueReceiptResponse issueReceipt(io.grpc.bverify.IssueReceiptRequest request) {
+    public io.grpc.bverify.ForwardResponse forward(io.grpc.bverify.ForwardRequest request) {
       return blockingUnaryCall(
-          getChannel(), getIssueReceiptMethodHelper(), getCallOptions(), request);
+          getChannel(), getForwardMethodHelper(), getCallOptions(), request);
     }
 
     /**
      */
-    public io.grpc.bverify.ApprovalsResponse getApprovalRequests(io.grpc.bverify.ApprovalsRequest request) {
+    public io.grpc.bverify.GetForwardedResponse getForwarded(io.grpc.bverify.GetForwardedRequest request) {
       return blockingUnaryCall(
-          getChannel(), getGetApprovalRequestsMethodHelper(), getCallOptions(), request);
+          getChannel(), getGetForwardedMethodHelper(), getCallOptions(), request);
     }
 
     /**
      */
-    public io.grpc.bverify.SubmitSignatureResponse submitSignature(io.grpc.bverify.SubmitSignatureRequest request) {
+    public io.grpc.bverify.SubmitResponse submit(io.grpc.bverify.SubmitRequest request) {
       return blockingUnaryCall(
-          getChannel(), getSubmitSignatureMethodHelper(), getCallOptions(), request);
+          getChannel(), getSubmitMethodHelper(), getCallOptions(), request);
     }
 
     /**
@@ -469,26 +469,26 @@ public final class BVerifyServerAPIGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.IssueReceiptResponse> issueReceipt(
-        io.grpc.bverify.IssueReceiptRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.ForwardResponse> forward(
+        io.grpc.bverify.ForwardRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getIssueReceiptMethodHelper(), getCallOptions()), request);
+          getChannel().newCall(getForwardMethodHelper(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.ApprovalsResponse> getApprovalRequests(
-        io.grpc.bverify.ApprovalsRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.GetForwardedResponse> getForwarded(
+        io.grpc.bverify.GetForwardedRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getGetApprovalRequestsMethodHelper(), getCallOptions()), request);
+          getChannel().newCall(getGetForwardedMethodHelper(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.SubmitSignatureResponse> submitSignature(
-        io.grpc.bverify.SubmitSignatureRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<io.grpc.bverify.SubmitResponse> submit(
+        io.grpc.bverify.SubmitRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getSubmitSignatureMethodHelper(), getCallOptions()), request);
+          getChannel().newCall(getSubmitMethodHelper(), getCallOptions()), request);
     }
 
     /**
@@ -508,9 +508,9 @@ public final class BVerifyServerAPIGrpc {
     }
   }
 
-  private static final int METHODID_ISSUE_RECEIPT = 0;
-  private static final int METHODID_GET_APPROVAL_REQUESTS = 1;
-  private static final int METHODID_SUBMIT_SIGNATURE = 2;
+  private static final int METHODID_FORWARD = 0;
+  private static final int METHODID_GET_FORWARDED = 1;
+  private static final int METHODID_SUBMIT = 2;
   private static final int METHODID_GET_DATA_REQUEST = 3;
   private static final int METHODID_GET_AUTH_PATH = 4;
 
@@ -531,17 +531,17 @@ public final class BVerifyServerAPIGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_ISSUE_RECEIPT:
-          serviceImpl.issueReceipt((io.grpc.bverify.IssueReceiptRequest) request,
-              (io.grpc.stub.StreamObserver<io.grpc.bverify.IssueReceiptResponse>) responseObserver);
+        case METHODID_FORWARD:
+          serviceImpl.forward((io.grpc.bverify.ForwardRequest) request,
+              (io.grpc.stub.StreamObserver<io.grpc.bverify.ForwardResponse>) responseObserver);
           break;
-        case METHODID_GET_APPROVAL_REQUESTS:
-          serviceImpl.getApprovalRequests((io.grpc.bverify.ApprovalsRequest) request,
-              (io.grpc.stub.StreamObserver<io.grpc.bverify.ApprovalsResponse>) responseObserver);
+        case METHODID_GET_FORWARDED:
+          serviceImpl.getForwarded((io.grpc.bverify.GetForwardedRequest) request,
+              (io.grpc.stub.StreamObserver<io.grpc.bverify.GetForwardedResponse>) responseObserver);
           break;
-        case METHODID_SUBMIT_SIGNATURE:
-          serviceImpl.submitSignature((io.grpc.bverify.SubmitSignatureRequest) request,
-              (io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitSignatureResponse>) responseObserver);
+        case METHODID_SUBMIT:
+          serviceImpl.submit((io.grpc.bverify.SubmitRequest) request,
+              (io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitResponse>) responseObserver);
           break;
         case METHODID_GET_DATA_REQUEST:
           serviceImpl.getDataRequest((io.grpc.bverify.DataRequest) request,
@@ -612,9 +612,9 @@ public final class BVerifyServerAPIGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new BVerifyServerAPIFileDescriptorSupplier())
-              .addMethod(getIssueReceiptMethodHelper())
-              .addMethod(getGetApprovalRequestsMethodHelper())
-              .addMethod(getSubmitSignatureMethodHelper())
+              .addMethod(getForwardMethodHelper())
+              .addMethod(getGetForwardedMethodHelper())
+              .addMethod(getSubmitMethodHelper())
               .addMethod(getGetDataRequestMethodHelper())
               .addMethod(getGetAuthPathMethodHelper())
               .build();

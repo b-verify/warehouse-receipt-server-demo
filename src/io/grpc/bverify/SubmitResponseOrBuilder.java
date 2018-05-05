@@ -3,8 +3,8 @@
 
 package io.grpc.bverify;
 
-public interface SubmitSignatureResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:api.SubmitSignatureResponse)
+public interface SubmitResponseOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:api.SubmitResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**

@@ -19,7 +19,7 @@ import mpt.set.AuthenticatedSetServer;
 import mpt.set.MPTSetFull;
 import pki.Account;
 import pki.PKIDirectory;
-import serialization.generated.BVerifyAPI.Receipt;
+import io.grpc.bverify.Receipt;
 import serialization.generated.MptSerialization.MerklePrefixTrie;
 
 

@@ -4,19 +4,19 @@
 package io.grpc.bverify;
 
 /**
- * Protobuf type {@code api.IssueReceiptResponse}
+ * Protobuf type {@code api.ForwardResponse}
  */
-public  final class IssueReceiptResponse extends
+public  final class ForwardResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:api.IssueReceiptResponse)
-    IssueReceiptResponseOrBuilder {
+    // @@protoc_insertion_point(message_implements:api.ForwardResponse)
+    ForwardResponseOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use IssueReceiptResponse.newBuilder() to construct.
-  private IssueReceiptResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ForwardResponse.newBuilder() to construct.
+  private ForwardResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private IssueReceiptResponse() {
-    scheduled_ = false;
+  private ForwardResponse() {
+    added_ = false;
   }
 
   @java.lang.Override
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private IssueReceiptResponse(
+  private ForwardResponse(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -52,7 +52,7 @@ private static final long serialVersionUID = 0L;
           }
           case 8: {
 
-            scheduled_ = input.readBool();
+            added_ = input.readBool();
             break;
           }
         }
@@ -69,23 +69,23 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.grpc.bverify.Api.internal_static_api_IssueReceiptResponse_descriptor;
+    return io.grpc.bverify.Api.internal_static_api_ForwardResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.grpc.bverify.Api.internal_static_api_IssueReceiptResponse_fieldAccessorTable
+    return io.grpc.bverify.Api.internal_static_api_ForwardResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.grpc.bverify.IssueReceiptResponse.class, io.grpc.bverify.IssueReceiptResponse.Builder.class);
+            io.grpc.bverify.ForwardResponse.class, io.grpc.bverify.ForwardResponse.Builder.class);
   }
 
-  public static final int SCHEDULED_FIELD_NUMBER = 1;
-  private boolean scheduled_;
+  public static final int ADDED_FIELD_NUMBER = 1;
+  private boolean added_;
   /**
-   * <code>bool scheduled = 1;</code>
+   * <code>bool added = 1;</code>
    */
-  public boolean getScheduled() {
-    return scheduled_;
+  public boolean getAdded() {
+    return added_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -100,8 +100,8 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (scheduled_ != false) {
-      output.writeBool(1, scheduled_);
+    if (added_ != false) {
+      output.writeBool(1, added_);
     }
     unknownFields.writeTo(output);
   }
@@ -111,9 +111,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (scheduled_ != false) {
+    if (added_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(1, scheduled_);
+        .computeBoolSize(1, added_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -125,14 +125,14 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.grpc.bverify.IssueReceiptResponse)) {
+    if (!(obj instanceof io.grpc.bverify.ForwardResponse)) {
       return super.equals(obj);
     }
-    io.grpc.bverify.IssueReceiptResponse other = (io.grpc.bverify.IssueReceiptResponse) obj;
+    io.grpc.bverify.ForwardResponse other = (io.grpc.bverify.ForwardResponse) obj;
 
     boolean result = true;
-    result = result && (getScheduled()
-        == other.getScheduled());
+    result = result && (getAdded()
+        == other.getAdded());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -144,77 +144,77 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + SCHEDULED_FIELD_NUMBER;
+    hash = (37 * hash) + ADDED_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-        getScheduled());
+        getAdded());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(byte[] data)
+  public static io.grpc.bverify.ForwardResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(java.io.InputStream input)
+  public static io.grpc.bverify.ForwardResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseDelimitedFrom(java.io.InputStream input)
+  public static io.grpc.bverify.ForwardResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseDelimitedFrom(
+  public static io.grpc.bverify.ForwardResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.grpc.bverify.IssueReceiptResponse parseFrom(
+  public static io.grpc.bverify.ForwardResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -226,7 +226,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.grpc.bverify.IssueReceiptResponse prototype) {
+  public static Builder newBuilder(io.grpc.bverify.ForwardResponse prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -241,25 +241,25 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code api.IssueReceiptResponse}
+   * Protobuf type {@code api.ForwardResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:api.IssueReceiptResponse)
-      io.grpc.bverify.IssueReceiptResponseOrBuilder {
+      // @@protoc_insertion_point(builder_implements:api.ForwardResponse)
+      io.grpc.bverify.ForwardResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.grpc.bverify.Api.internal_static_api_IssueReceiptResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ForwardResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.grpc.bverify.Api.internal_static_api_IssueReceiptResponse_fieldAccessorTable
+      return io.grpc.bverify.Api.internal_static_api_ForwardResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.grpc.bverify.IssueReceiptResponse.class, io.grpc.bverify.IssueReceiptResponse.Builder.class);
+              io.grpc.bverify.ForwardResponse.class, io.grpc.bverify.ForwardResponse.Builder.class);
     }
 
-    // Construct using io.grpc.bverify.IssueReceiptResponse.newBuilder()
+    // Construct using io.grpc.bverify.ForwardResponse.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -276,31 +276,31 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      scheduled_ = false;
+      added_ = false;
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.grpc.bverify.Api.internal_static_api_IssueReceiptResponse_descriptor;
+      return io.grpc.bverify.Api.internal_static_api_ForwardResponse_descriptor;
     }
 
-    public io.grpc.bverify.IssueReceiptResponse getDefaultInstanceForType() {
-      return io.grpc.bverify.IssueReceiptResponse.getDefaultInstance();
+    public io.grpc.bverify.ForwardResponse getDefaultInstanceForType() {
+      return io.grpc.bverify.ForwardResponse.getDefaultInstance();
     }
 
-    public io.grpc.bverify.IssueReceiptResponse build() {
-      io.grpc.bverify.IssueReceiptResponse result = buildPartial();
+    public io.grpc.bverify.ForwardResponse build() {
+      io.grpc.bverify.ForwardResponse result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public io.grpc.bverify.IssueReceiptResponse buildPartial() {
-      io.grpc.bverify.IssueReceiptResponse result = new io.grpc.bverify.IssueReceiptResponse(this);
-      result.scheduled_ = scheduled_;
+    public io.grpc.bverify.ForwardResponse buildPartial() {
+      io.grpc.bverify.ForwardResponse result = new io.grpc.bverify.ForwardResponse(this);
+      result.added_ = added_;
       onBuilt();
       return result;
     }
@@ -332,18 +332,18 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.grpc.bverify.IssueReceiptResponse) {
-        return mergeFrom((io.grpc.bverify.IssueReceiptResponse)other);
+      if (other instanceof io.grpc.bverify.ForwardResponse) {
+        return mergeFrom((io.grpc.bverify.ForwardResponse)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.grpc.bverify.IssueReceiptResponse other) {
-      if (other == io.grpc.bverify.IssueReceiptResponse.getDefaultInstance()) return this;
-      if (other.getScheduled() != false) {
-        setScheduled(other.getScheduled());
+    public Builder mergeFrom(io.grpc.bverify.ForwardResponse other) {
+      if (other == io.grpc.bverify.ForwardResponse.getDefaultInstance()) return this;
+      if (other.getAdded() != false) {
+        setAdded(other.getAdded());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -358,11 +358,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.grpc.bverify.IssueReceiptResponse parsedMessage = null;
+      io.grpc.bverify.ForwardResponse parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.grpc.bverify.IssueReceiptResponse) e.getUnfinishedMessage();
+        parsedMessage = (io.grpc.bverify.ForwardResponse) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -372,28 +372,28 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private boolean scheduled_ ;
+    private boolean added_ ;
     /**
-     * <code>bool scheduled = 1;</code>
+     * <code>bool added = 1;</code>
      */
-    public boolean getScheduled() {
-      return scheduled_;
+    public boolean getAdded() {
+      return added_;
     }
     /**
-     * <code>bool scheduled = 1;</code>
+     * <code>bool added = 1;</code>
      */
-    public Builder setScheduled(boolean value) {
+    public Builder setAdded(boolean value) {
       
-      scheduled_ = value;
+      added_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>bool scheduled = 1;</code>
+     * <code>bool added = 1;</code>
      */
-    public Builder clearScheduled() {
+    public Builder clearAdded() {
       
-      scheduled_ = false;
+      added_ = false;
       onChanged();
       return this;
     }
@@ -408,39 +408,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:api.IssueReceiptResponse)
+    // @@protoc_insertion_point(builder_scope:api.ForwardResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:api.IssueReceiptResponse)
-  private static final io.grpc.bverify.IssueReceiptResponse DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:api.ForwardResponse)
+  private static final io.grpc.bverify.ForwardResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.grpc.bverify.IssueReceiptResponse();
+    DEFAULT_INSTANCE = new io.grpc.bverify.ForwardResponse();
   }
 
-  public static io.grpc.bverify.IssueReceiptResponse getDefaultInstance() {
+  public static io.grpc.bverify.ForwardResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<IssueReceiptResponse>
-      PARSER = new com.google.protobuf.AbstractParser<IssueReceiptResponse>() {
-    public IssueReceiptResponse parsePartialFrom(
+  private static final com.google.protobuf.Parser<ForwardResponse>
+      PARSER = new com.google.protobuf.AbstractParser<ForwardResponse>() {
+    public ForwardResponse parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new IssueReceiptResponse(input, extensionRegistry);
+      return new ForwardResponse(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<IssueReceiptResponse> parser() {
+  public static com.google.protobuf.Parser<ForwardResponse> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<IssueReceiptResponse> getParserForType() {
+  public com.google.protobuf.Parser<ForwardResponse> getParserForType() {
     return PARSER;
   }
 
-  public io.grpc.bverify.IssueReceiptResponse getDefaultInstanceForType() {
+  public io.grpc.bverify.ForwardResponse getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

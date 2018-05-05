@@ -16,7 +16,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private DataRequest() {
-    adsIds_ = java.util.Collections.emptyList();
+    adsId_ = com.google.protobuf.ByteString.EMPTY;
     commitmentNumber_ = 0;
   }
 
@@ -52,11 +52,8 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 10: {
-            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              adsIds_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            adsIds_.add(input.readBytes());
+
+            adsId_ = input.readBytes();
             break;
           }
           case 16: {
@@ -72,9 +69,6 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-        adsIds_ = java.util.Collections.unmodifiableList(adsIds_);
-      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -91,27 +85,13 @@ private static final long serialVersionUID = 0L;
             io.grpc.bverify.DataRequest.class, io.grpc.bverify.DataRequest.Builder.class);
   }
 
-  private int bitField0_;
-  public static final int ADSIDS_FIELD_NUMBER = 1;
-  private java.util.List<com.google.protobuf.ByteString> adsIds_;
+  public static final int ADSID_FIELD_NUMBER = 1;
+  private com.google.protobuf.ByteString adsId_;
   /**
-   * <code>repeated bytes adsIds = 1;</code>
+   * <code>bytes adsId = 1;</code>
    */
-  public java.util.List<com.google.protobuf.ByteString>
-      getAdsIdsList() {
-    return adsIds_;
-  }
-  /**
-   * <code>repeated bytes adsIds = 1;</code>
-   */
-  public int getAdsIdsCount() {
-    return adsIds_.size();
-  }
-  /**
-   * <code>repeated bytes adsIds = 1;</code>
-   */
-  public com.google.protobuf.ByteString getAdsIds(int index) {
-    return adsIds_.get(index);
+  public com.google.protobuf.ByteString getAdsId() {
+    return adsId_;
   }
 
   public static final int COMMITMENTNUMBER_FIELD_NUMBER = 2;
@@ -135,8 +115,8 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    for (int i = 0; i < adsIds_.size(); i++) {
-      output.writeBytes(1, adsIds_.get(i));
+    if (!adsId_.isEmpty()) {
+      output.writeBytes(1, adsId_);
     }
     if (commitmentNumber_ != 0) {
       output.writeInt32(2, commitmentNumber_);
@@ -149,14 +129,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    {
-      int dataSize = 0;
-      for (int i = 0; i < adsIds_.size(); i++) {
-        dataSize += com.google.protobuf.CodedOutputStream
-          .computeBytesSizeNoTag(adsIds_.get(i));
-      }
-      size += dataSize;
-      size += 1 * getAdsIdsList().size();
+    if (!adsId_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(1, adsId_);
     }
     if (commitmentNumber_ != 0) {
       size += com.google.protobuf.CodedOutputStream
@@ -178,8 +153,8 @@ private static final long serialVersionUID = 0L;
     io.grpc.bverify.DataRequest other = (io.grpc.bverify.DataRequest) obj;
 
     boolean result = true;
-    result = result && getAdsIdsList()
-        .equals(other.getAdsIdsList());
+    result = result && getAdsId()
+        .equals(other.getAdsId());
     result = result && (getCommitmentNumber()
         == other.getCommitmentNumber());
     result = result && unknownFields.equals(other.unknownFields);
@@ -193,10 +168,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    if (getAdsIdsCount() > 0) {
-      hash = (37 * hash) + ADSIDS_FIELD_NUMBER;
-      hash = (53 * hash) + getAdsIdsList().hashCode();
-    }
+    hash = (37 * hash) + ADSID_FIELD_NUMBER;
+    hash = (53 * hash) + getAdsId().hashCode();
     hash = (37 * hash) + COMMITMENTNUMBER_FIELD_NUMBER;
     hash = (53 * hash) + getCommitmentNumber();
     hash = (29 * hash) + unknownFields.hashCode();
@@ -328,8 +301,8 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      adsIds_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000001);
+      adsId_ = com.google.protobuf.ByteString.EMPTY;
+
       commitmentNumber_ = 0;
 
       return this;
@@ -354,15 +327,8 @@ private static final long serialVersionUID = 0L;
 
     public io.grpc.bverify.DataRequest buildPartial() {
       io.grpc.bverify.DataRequest result = new io.grpc.bverify.DataRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        adsIds_ = java.util.Collections.unmodifiableList(adsIds_);
-        bitField0_ = (bitField0_ & ~0x00000001);
-      }
-      result.adsIds_ = adsIds_;
+      result.adsId_ = adsId_;
       result.commitmentNumber_ = commitmentNumber_;
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -404,15 +370,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(io.grpc.bverify.DataRequest other) {
       if (other == io.grpc.bverify.DataRequest.getDefaultInstance()) return this;
-      if (!other.adsIds_.isEmpty()) {
-        if (adsIds_.isEmpty()) {
-          adsIds_ = other.adsIds_;
-          bitField0_ = (bitField0_ & ~0x00000001);
-        } else {
-          ensureAdsIdsIsMutable();
-          adsIds_.addAll(other.adsIds_);
-        }
-        onChanged();
+      if (other.getAdsId() != com.google.protobuf.ByteString.EMPTY) {
+        setAdsId(other.getAdsId());
       }
       if (other.getCommitmentNumber() != 0) {
         setCommitmentNumber(other.getCommitmentNumber());
@@ -443,76 +402,32 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int bitField0_;
 
-    private java.util.List<com.google.protobuf.ByteString> adsIds_ = java.util.Collections.emptyList();
-    private void ensureAdsIdsIsMutable() {
-      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        adsIds_ = new java.util.ArrayList<com.google.protobuf.ByteString>(adsIds_);
-        bitField0_ |= 0x00000001;
-       }
+    private com.google.protobuf.ByteString adsId_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <code>bytes adsId = 1;</code>
+     */
+    public com.google.protobuf.ByteString getAdsId() {
+      return adsId_;
     }
     /**
-     * <code>repeated bytes adsIds = 1;</code>
+     * <code>bytes adsId = 1;</code>
      */
-    public java.util.List<com.google.protobuf.ByteString>
-        getAdsIdsList() {
-      return java.util.Collections.unmodifiableList(adsIds_);
-    }
-    /**
-     * <code>repeated bytes adsIds = 1;</code>
-     */
-    public int getAdsIdsCount() {
-      return adsIds_.size();
-    }
-    /**
-     * <code>repeated bytes adsIds = 1;</code>
-     */
-    public com.google.protobuf.ByteString getAdsIds(int index) {
-      return adsIds_.get(index);
-    }
-    /**
-     * <code>repeated bytes adsIds = 1;</code>
-     */
-    public Builder setAdsIds(
-        int index, com.google.protobuf.ByteString value) {
+    public Builder setAdsId(com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  ensureAdsIdsIsMutable();
-      adsIds_.set(index, value);
+  
+      adsId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>repeated bytes adsIds = 1;</code>
+     * <code>bytes adsId = 1;</code>
      */
-    public Builder addAdsIds(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureAdsIdsIsMutable();
-      adsIds_.add(value);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated bytes adsIds = 1;</code>
-     */
-    public Builder addAllAdsIds(
-        java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
-      ensureAdsIdsIsMutable();
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(
-          values, adsIds_);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated bytes adsIds = 1;</code>
-     */
-    public Builder clearAdsIds() {
-      adsIds_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000001);
+    public Builder clearAdsId() {
+      
+      adsId_ = getDefaultInstance().getAdsId();
       onChanged();
       return this;
     }

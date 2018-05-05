@@ -16,8 +16,8 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private IssueReceiptRequest() {
-    issuerId_ = "";
-    recepientId_ = "";
+    signatureWarehouse_ = com.google.protobuf.ByteString.EMPTY;
+    signatureDepositor_ = com.google.protobuf.ByteString.EMPTY;
   }
 
   @java.lang.Override
@@ -52,18 +52,6 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            issuerId_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            recepientId_ = s;
-            break;
-          }
-          case 26: {
             io.grpc.bverify.Receipt.Builder subBuilder = null;
             if (receipt_ != null) {
               subBuilder = receipt_.toBuilder();
@@ -76,17 +64,14 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 34: {
-            io.grpc.bverify.Signature.Builder subBuilder = null;
-            if (signature_ != null) {
-              subBuilder = signature_.toBuilder();
-            }
-            signature_ = input.readMessage(io.grpc.bverify.Signature.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(signature_);
-              signature_ = subBuilder.buildPartial();
-            }
+          case 18: {
 
+            signatureWarehouse_ = input.readBytes();
+            break;
+          }
+          case 26: {
+
+            signatureDepositor_ = input.readBytes();
             break;
           }
         }
@@ -113,114 +98,43 @@ private static final long serialVersionUID = 0L;
             io.grpc.bverify.IssueReceiptRequest.class, io.grpc.bverify.IssueReceiptRequest.Builder.class);
   }
 
-  public static final int ISSUER_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object issuerId_;
-  /**
-   * <code>string issuer_id = 1;</code>
-   */
-  public java.lang.String getIssuerId() {
-    java.lang.Object ref = issuerId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      issuerId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string issuer_id = 1;</code>
-   */
-  public com.google.protobuf.ByteString
-      getIssuerIdBytes() {
-    java.lang.Object ref = issuerId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      issuerId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int RECEPIENT_ID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object recepientId_;
-  /**
-   * <code>string recepient_id = 2;</code>
-   */
-  public java.lang.String getRecepientId() {
-    java.lang.Object ref = recepientId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      recepientId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string recepient_id = 2;</code>
-   */
-  public com.google.protobuf.ByteString
-      getRecepientIdBytes() {
-    java.lang.Object ref = recepientId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      recepientId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int RECEIPT_FIELD_NUMBER = 3;
+  public static final int RECEIPT_FIELD_NUMBER = 1;
   private io.grpc.bverify.Receipt receipt_;
   /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   public boolean hasReceipt() {
     return receipt_ != null;
   }
   /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   public io.grpc.bverify.Receipt getReceipt() {
     return receipt_ == null ? io.grpc.bverify.Receipt.getDefaultInstance() : receipt_;
   }
   /**
-   * <code>.api.Receipt receipt = 3;</code>
+   * <code>.api.Receipt receipt = 1;</code>
    */
   public io.grpc.bverify.ReceiptOrBuilder getReceiptOrBuilder() {
     return getReceipt();
   }
 
-  public static final int SIGNATURE_FIELD_NUMBER = 4;
-  private io.grpc.bverify.Signature signature_;
+  public static final int SIGNATURE_WAREHOUSE_FIELD_NUMBER = 2;
+  private com.google.protobuf.ByteString signatureWarehouse_;
   /**
-   * <code>.api.Signature signature = 4;</code>
+   * <code>bytes signature_warehouse = 2;</code>
    */
-  public boolean hasSignature() {
-    return signature_ != null;
+  public com.google.protobuf.ByteString getSignatureWarehouse() {
+    return signatureWarehouse_;
   }
+
+  public static final int SIGNATURE_DEPOSITOR_FIELD_NUMBER = 3;
+  private com.google.protobuf.ByteString signatureDepositor_;
   /**
-   * <code>.api.Signature signature = 4;</code>
+   * <code>bytes signature_depositor = 3;</code>
    */
-  public io.grpc.bverify.Signature getSignature() {
-    return signature_ == null ? io.grpc.bverify.Signature.getDefaultInstance() : signature_;
-  }
-  /**
-   * <code>.api.Signature signature = 4;</code>
-   */
-  public io.grpc.bverify.SignatureOrBuilder getSignatureOrBuilder() {
-    return getSignature();
+  public com.google.protobuf.ByteString getSignatureDepositor() {
+    return signatureDepositor_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -235,17 +149,14 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getIssuerIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, issuerId_);
-    }
-    if (!getRecepientIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, recepientId_);
-    }
     if (receipt_ != null) {
-      output.writeMessage(3, getReceipt());
+      output.writeMessage(1, getReceipt());
     }
-    if (signature_ != null) {
-      output.writeMessage(4, getSignature());
+    if (!signatureWarehouse_.isEmpty()) {
+      output.writeBytes(2, signatureWarehouse_);
+    }
+    if (!signatureDepositor_.isEmpty()) {
+      output.writeBytes(3, signatureDepositor_);
     }
     unknownFields.writeTo(output);
   }
@@ -255,19 +166,17 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getIssuerIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, issuerId_);
-    }
-    if (!getRecepientIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, recepientId_);
-    }
     if (receipt_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getReceipt());
+        .computeMessageSize(1, getReceipt());
     }
-    if (signature_ != null) {
+    if (!signatureWarehouse_.isEmpty()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getSignature());
+        .computeBytesSize(2, signatureWarehouse_);
+    }
+    if (!signatureDepositor_.isEmpty()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(3, signatureDepositor_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -285,20 +194,15 @@ private static final long serialVersionUID = 0L;
     io.grpc.bverify.IssueReceiptRequest other = (io.grpc.bverify.IssueReceiptRequest) obj;
 
     boolean result = true;
-    result = result && getIssuerId()
-        .equals(other.getIssuerId());
-    result = result && getRecepientId()
-        .equals(other.getRecepientId());
     result = result && (hasReceipt() == other.hasReceipt());
     if (hasReceipt()) {
       result = result && getReceipt()
           .equals(other.getReceipt());
     }
-    result = result && (hasSignature() == other.hasSignature());
-    if (hasSignature()) {
-      result = result && getSignature()
-          .equals(other.getSignature());
-    }
+    result = result && getSignatureWarehouse()
+        .equals(other.getSignatureWarehouse());
+    result = result && getSignatureDepositor()
+        .equals(other.getSignatureDepositor());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -310,18 +214,14 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + ISSUER_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getIssuerId().hashCode();
-    hash = (37 * hash) + RECEPIENT_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getRecepientId().hashCode();
     if (hasReceipt()) {
       hash = (37 * hash) + RECEIPT_FIELD_NUMBER;
       hash = (53 * hash) + getReceipt().hashCode();
     }
-    if (hasSignature()) {
-      hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
-      hash = (53 * hash) + getSignature().hashCode();
-    }
+    hash = (37 * hash) + SIGNATURE_WAREHOUSE_FIELD_NUMBER;
+    hash = (53 * hash) + getSignatureWarehouse().hashCode();
+    hash = (37 * hash) + SIGNATURE_DEPOSITOR_FIELD_NUMBER;
+    hash = (53 * hash) + getSignatureDepositor().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -451,22 +351,16 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      issuerId_ = "";
-
-      recepientId_ = "";
-
       if (receiptBuilder_ == null) {
         receipt_ = null;
       } else {
         receipt_ = null;
         receiptBuilder_ = null;
       }
-      if (signatureBuilder_ == null) {
-        signature_ = null;
-      } else {
-        signature_ = null;
-        signatureBuilder_ = null;
-      }
+      signatureWarehouse_ = com.google.protobuf.ByteString.EMPTY;
+
+      signatureDepositor_ = com.google.protobuf.ByteString.EMPTY;
+
       return this;
     }
 
@@ -489,18 +383,13 @@ private static final long serialVersionUID = 0L;
 
     public io.grpc.bverify.IssueReceiptRequest buildPartial() {
       io.grpc.bverify.IssueReceiptRequest result = new io.grpc.bverify.IssueReceiptRequest(this);
-      result.issuerId_ = issuerId_;
-      result.recepientId_ = recepientId_;
       if (receiptBuilder_ == null) {
         result.receipt_ = receipt_;
       } else {
         result.receipt_ = receiptBuilder_.build();
       }
-      if (signatureBuilder_ == null) {
-        result.signature_ = signature_;
-      } else {
-        result.signature_ = signatureBuilder_.build();
-      }
+      result.signatureWarehouse_ = signatureWarehouse_;
+      result.signatureDepositor_ = signatureDepositor_;
       onBuilt();
       return result;
     }
@@ -542,19 +431,14 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(io.grpc.bverify.IssueReceiptRequest other) {
       if (other == io.grpc.bverify.IssueReceiptRequest.getDefaultInstance()) return this;
-      if (!other.getIssuerId().isEmpty()) {
-        issuerId_ = other.issuerId_;
-        onChanged();
-      }
-      if (!other.getRecepientId().isEmpty()) {
-        recepientId_ = other.recepientId_;
-        onChanged();
-      }
       if (other.hasReceipt()) {
         mergeReceipt(other.getReceipt());
       }
-      if (other.hasSignature()) {
-        mergeSignature(other.getSignature());
+      if (other.getSignatureWarehouse() != com.google.protobuf.ByteString.EMPTY) {
+        setSignatureWarehouse(other.getSignatureWarehouse());
+      }
+      if (other.getSignatureDepositor() != com.google.protobuf.ByteString.EMPTY) {
+        setSignatureDepositor(other.getSignatureDepositor());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -583,155 +467,17 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object issuerId_ = "";
-    /**
-     * <code>string issuer_id = 1;</code>
-     */
-    public java.lang.String getIssuerId() {
-      java.lang.Object ref = issuerId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        issuerId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string issuer_id = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getIssuerIdBytes() {
-      java.lang.Object ref = issuerId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        issuerId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string issuer_id = 1;</code>
-     */
-    public Builder setIssuerId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      issuerId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string issuer_id = 1;</code>
-     */
-    public Builder clearIssuerId() {
-      
-      issuerId_ = getDefaultInstance().getIssuerId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string issuer_id = 1;</code>
-     */
-    public Builder setIssuerIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      issuerId_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object recepientId_ = "";
-    /**
-     * <code>string recepient_id = 2;</code>
-     */
-    public java.lang.String getRecepientId() {
-      java.lang.Object ref = recepientId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        recepientId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string recepient_id = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getRecepientIdBytes() {
-      java.lang.Object ref = recepientId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        recepientId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string recepient_id = 2;</code>
-     */
-    public Builder setRecepientId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      recepientId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string recepient_id = 2;</code>
-     */
-    public Builder clearRecepientId() {
-      
-      recepientId_ = getDefaultInstance().getRecepientId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string recepient_id = 2;</code>
-     */
-    public Builder setRecepientIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      recepientId_ = value;
-      onChanged();
-      return this;
-    }
-
     private io.grpc.bverify.Receipt receipt_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         io.grpc.bverify.Receipt, io.grpc.bverify.Receipt.Builder, io.grpc.bverify.ReceiptOrBuilder> receiptBuilder_;
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public boolean hasReceipt() {
       return receiptBuilder_ != null || receipt_ != null;
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public io.grpc.bverify.Receipt getReceipt() {
       if (receiptBuilder_ == null) {
@@ -741,7 +487,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public Builder setReceipt(io.grpc.bverify.Receipt value) {
       if (receiptBuilder_ == null) {
@@ -757,7 +503,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public Builder setReceipt(
         io.grpc.bverify.Receipt.Builder builderForValue) {
@@ -771,7 +517,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public Builder mergeReceipt(io.grpc.bverify.Receipt value) {
       if (receiptBuilder_ == null) {
@@ -789,7 +535,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public Builder clearReceipt() {
       if (receiptBuilder_ == null) {
@@ -803,7 +549,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public io.grpc.bverify.Receipt.Builder getReceiptBuilder() {
       
@@ -811,7 +557,7 @@ private static final long serialVersionUID = 0L;
       return getReceiptFieldBuilder().getBuilder();
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     public io.grpc.bverify.ReceiptOrBuilder getReceiptOrBuilder() {
       if (receiptBuilder_ != null) {
@@ -822,7 +568,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.api.Receipt receipt = 3;</code>
+     * <code>.api.Receipt receipt = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         io.grpc.bverify.Receipt, io.grpc.bverify.Receipt.Builder, io.grpc.bverify.ReceiptOrBuilder> 
@@ -838,121 +584,62 @@ private static final long serialVersionUID = 0L;
       return receiptBuilder_;
     }
 
-    private io.grpc.bverify.Signature signature_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        io.grpc.bverify.Signature, io.grpc.bverify.Signature.Builder, io.grpc.bverify.SignatureOrBuilder> signatureBuilder_;
+    private com.google.protobuf.ByteString signatureWarehouse_ = com.google.protobuf.ByteString.EMPTY;
     /**
-     * <code>.api.Signature signature = 4;</code>
+     * <code>bytes signature_warehouse = 2;</code>
      */
-    public boolean hasSignature() {
-      return signatureBuilder_ != null || signature_ != null;
+    public com.google.protobuf.ByteString getSignatureWarehouse() {
+      return signatureWarehouse_;
     }
     /**
-     * <code>.api.Signature signature = 4;</code>
+     * <code>bytes signature_warehouse = 2;</code>
      */
-    public io.grpc.bverify.Signature getSignature() {
-      if (signatureBuilder_ == null) {
-        return signature_ == null ? io.grpc.bverify.Signature.getDefaultInstance() : signature_;
-      } else {
-        return signatureBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.api.Signature signature = 4;</code>
-     */
-    public Builder setSignature(io.grpc.bverify.Signature value) {
-      if (signatureBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        signature_ = value;
-        onChanged();
-      } else {
-        signatureBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.api.Signature signature = 4;</code>
-     */
-    public Builder setSignature(
-        io.grpc.bverify.Signature.Builder builderForValue) {
-      if (signatureBuilder_ == null) {
-        signature_ = builderForValue.build();
-        onChanged();
-      } else {
-        signatureBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <code>.api.Signature signature = 4;</code>
-     */
-    public Builder mergeSignature(io.grpc.bverify.Signature value) {
-      if (signatureBuilder_ == null) {
-        if (signature_ != null) {
-          signature_ =
-            io.grpc.bverify.Signature.newBuilder(signature_).mergeFrom(value).buildPartial();
-        } else {
-          signature_ = value;
-        }
-        onChanged();
-      } else {
-        signatureBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.api.Signature signature = 4;</code>
-     */
-    public Builder clearSignature() {
-      if (signatureBuilder_ == null) {
-        signature_ = null;
-        onChanged();
-      } else {
-        signature_ = null;
-        signatureBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <code>.api.Signature signature = 4;</code>
-     */
-    public io.grpc.bverify.Signature.Builder getSignatureBuilder() {
-      
+    public Builder setSignatureWarehouse(com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      signatureWarehouse_ = value;
       onChanged();
-      return getSignatureFieldBuilder().getBuilder();
+      return this;
     }
     /**
-     * <code>.api.Signature signature = 4;</code>
+     * <code>bytes signature_warehouse = 2;</code>
      */
-    public io.grpc.bverify.SignatureOrBuilder getSignatureOrBuilder() {
-      if (signatureBuilder_ != null) {
-        return signatureBuilder_.getMessageOrBuilder();
-      } else {
-        return signature_ == null ?
-            io.grpc.bverify.Signature.getDefaultInstance() : signature_;
-      }
+    public Builder clearSignatureWarehouse() {
+      
+      signatureWarehouse_ = getDefaultInstance().getSignatureWarehouse();
+      onChanged();
+      return this;
+    }
+
+    private com.google.protobuf.ByteString signatureDepositor_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <code>bytes signature_depositor = 3;</code>
+     */
+    public com.google.protobuf.ByteString getSignatureDepositor() {
+      return signatureDepositor_;
     }
     /**
-     * <code>.api.Signature signature = 4;</code>
+     * <code>bytes signature_depositor = 3;</code>
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        io.grpc.bverify.Signature, io.grpc.bverify.Signature.Builder, io.grpc.bverify.SignatureOrBuilder> 
-        getSignatureFieldBuilder() {
-      if (signatureBuilder_ == null) {
-        signatureBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            io.grpc.bverify.Signature, io.grpc.bverify.Signature.Builder, io.grpc.bverify.SignatureOrBuilder>(
-                getSignature(),
-                getParentForChildren(),
-                isClean());
-        signature_ = null;
-      }
-      return signatureBuilder_;
+    public Builder setSignatureDepositor(com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      signatureDepositor_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bytes signature_depositor = 3;</code>
+     */
+    public Builder clearSignatureDepositor() {
+      
+      signatureDepositor_ = getDefaultInstance().getSignatureDepositor();
+      onChanged();
+      return this;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
