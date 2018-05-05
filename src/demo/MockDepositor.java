@@ -121,8 +121,8 @@ public class MockDepositor implements Runnable {
 		if(newCommitments.size() > 0) {
 			for(byte[] newCommitment : newCommitments) {
 				int newCommitmentNumber = this.currentCommitmentNumber + 1;
-				logger.log(Level.INFO, "...new commitment #"+newCommitmentNumber);
-				this.checkCommitment(newCommitment, newCommitmentNumber);
+				logger.log(Level.INFO, "...new commitment found asking for proof");
+				boolean result = this.checkCommitment(newCommitment, newCommitmentNumber);
 				this.currentCommitmentNumber = newCommitmentNumber;
 				this.currentCommitment = newCommitment;
 			}
@@ -183,7 +183,7 @@ public class MockDepositor implements Runnable {
 		byte[] witness = CryptographicUtils.witnessReceipt(r);
 		this.ads.insert(witness);
 		byte[] newRoot = this.ads.commitment();
-		logger.log(Level.INFO, "...new ads root: "+Utils.byteArrayAsHexString(newRoot));
+		logger.log(Level.INFO, "...NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
 		byte[] sig = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());
 		return request.toBuilder().setSignatureDepositor(ByteString.copyFrom(sig)).build();
 	}
@@ -201,27 +201,34 @@ public class MockDepositor implements Runnable {
 		return accepted;
 	}
 	
-	private boolean checkCommitment(byte[] commitment, int commitmentNumber) {
-		logger.log(Level.INFO, "...checking commtiment# : "+commitmentNumber+
-				"| "+Utils.byteArrayAsHexString(commitment));
+	private boolean checkCommitment(final byte[] commitment, final int commitmentNumber) {
+		logger.log(Level.INFO, "...checking commtiment : #"+commitmentNumber+
+				" | "+Utils.byteArrayAsHexString(commitment));
 		logger.log(Level.INFO, "...asking for proof from the server");
-		MPTDictionaryPartial mpt = this.getPath(Arrays.asList(this.adsKey), this.currentCommitmentNumber);
-		System.out.println("PROOF RECIEVED: "+mpt);
+		MPTDictionaryPartial mpt = this.getPath(Arrays.asList(this.adsKey), commitmentNumber);
 		logger.log(Level.INFO, "...checking proof");
 		// check that the auth proof is correct
 		try {
+			logger.log(Level.INFO, "...checking that mapping is correct");
 			if(!Arrays.equals(mpt.get(this.adsKey), this.ads.commitment())){
-				// for now just throw error, but really should return false isntead
-				throw new RuntimeException("data does not match");
+				logger.log(Level.WARNING, "...MAPPING DOES NOT MATCH");
+				System.err.println("MAPPING DOES NOT MATCH");
+				return false;
 			}
+			logger.log(Level.INFO, "...checking that commitment matches");
+			System.out.println(Utils.byteArrayAsHexString(mpt.commitment()));
+			System.out.println(Utils.byteArrayAsHexString(commitment));
 			if(!Arrays.equals(commitment, mpt.commitment())) {
-				throw new RuntimeException("commitment does not match");
+				logger.log(Level.WARNING, "...COMMITMENT DOES NOT MATCH");
+				System.err.println("COMMITMENT DOES NOT MATCH");
 			}
+			logger.log(Level.INFO, "...commitment accepted");
+			return true;
 		} catch (InsufficientAuthenticationDataException e) {
 			e.printStackTrace();
+			System.err.println("Error!");
 			throw new RuntimeException("bad proof!");
 		}
-		return true;
 	}
 
 	
@@ -240,9 +247,7 @@ public class MockDepositor implements Runnable {
 		
 		// create a thread that polls the server and automatically approves any requests
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(aliceClient, 0, 1, TimeUnit.SECONDS);
-		
-		
+		exec.scheduleAtFixedRate(aliceClient, 0, 5, TimeUnit.SECONDS);
 		Scanner sc = new Scanner(System.in);
 		sc.nextLine();
 		System.out.println("Press enter to shutdown");

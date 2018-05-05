@@ -141,6 +141,7 @@ public class BVerifyServer {
 			// lookup requests to forward
 			synchronized(this) {
 				requestMsg = this.approvalRequests.get(id);
+				this.approvalRequests.remove(id);
 			}
 			io.grpc.bverify.GetForwardedResponse response;
 			if(requestMsg != null) {
@@ -171,8 +172,7 @@ public class BVerifyServer {
 			byte[] receiptWitness = CryptographicUtils.witnessReceipt(receipt);
 			ads.insert(receiptWitness);
 			adsData.add(receipt);
-			byte[] newRoot = ads.commitment();
-			
+			byte[] newRoot = ads.commitment();			
 			boolean signedWarehouse = CryptographicSignature.verify(newRoot, 
 					request.getRequest().getSignatureWarehouse().toByteArray(),
 					warehouse.getPublicKey());
@@ -183,7 +183,9 @@ public class BVerifyServer {
 			// if both have signed, update the authentication
 			// and commit
 			if(signedDepositor && signedWarehouse) {
-				logger.log(Level.INFO, "Update Accepted!");
+				logger.log(Level.INFO, "Update Accepted! : "
+						+Utils.byteArrayAsHexString(adsKey)+"->"+
+						Utils.byteArrayAsHexString(newRoot));
 				this.adsManager.updateADS(adsKey, adsData, ads);
 				// committing!
 				byte[] newCommitment = this.adsManager.commit();

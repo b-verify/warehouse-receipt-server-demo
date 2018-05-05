@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,14 +36,13 @@ import io.grpc.bverify.Receipt;
 import mpt.core.InsufficientAuthenticationDataException;
 import mpt.core.InvalidSerializationException;
 import mpt.core.Utils;
-import mpt.dictionary.AuthenticatedDictionaryClient;
 import mpt.dictionary.MPTDictionaryPartial;
 import mpt.set.AuthenticatedSetServer;
 import mpt.set.MPTSetFull;
 import pki.Account;
 import pki.PKIDirectory;
 
-public class MockWarehouse {
+public class MockWarehouse implements Runnable {
 	private static final Logger logger = Logger.getLogger(MockWarehouse.class.getName());
 
 	private final Account account;
@@ -48,10 +50,9 @@ public class MockWarehouse {
 	private final List<Account> depositors;
 	
 	// data
+	private final Map<String, byte[]> adsStringToKey;
 	private final Map<String, AuthenticatedSetServer> adsKeyToADS;
 	private final Map<String, Set<Receipt>> adsKeyToADSData;
-
-	private AuthenticatedDictionaryClient authADS;
 	
 	// witnessing 
 	private byte[] currentCommitment;
@@ -89,10 +90,12 @@ public class MockWarehouse {
 		logger.log(Level.INFO, "...current commitment: #"+this.currentCommitmentNumber+" - "+
 				Utils.byteArrayAsHexString(this.currentCommitment));
 		
+		this.adsStringToKey = new HashMap<>();
 		this.adsKeyToADS = new HashMap<>();
 		this.adsKeyToADSData = new HashMap<>();
 		for(byte[] adsKey : this.account.getADSKeys()) {
 			String adsKeyString = Utils.byteArrayAsHexString(adsKey);
+			this.adsStringToKey.put(adsKeyString, adsKey);
 			logger.log(Level.INFO, "...asking for data from the server for ads: "+adsKeyString);
 			MPTSetFull ads = new MPTSetFull();
 			Set<Receipt> adsData = new HashSet<>();
@@ -110,6 +113,26 @@ public class MockWarehouse {
 		logger.log(Level.INFO, "...asking for a proof, checking latest commitment");
 		this.checkCommitment(this.currentCommitment, this.currentCommitmentNumber);
 		logger.log(Level.INFO, "...setup complete!");
+	}
+	
+	/**
+	 * Periodically the mock depositor polls the serve and approves any requests
+	 */
+	@Override
+	public void run() {
+		logger.log(Level.INFO, "...polling sever for new commitments");
+		List<byte[]> commitments  = this.getCommitments();
+		// get the new commitments if any
+		List<byte[]> newCommitments = commitments.subList(this.currentCommitmentNumber+1, commitments.size());
+		if(newCommitments.size() > 0) {
+			for(byte[] newCommitment : newCommitments) {
+				int newCommitmentNumber = this.currentCommitmentNumber + 1;
+				logger.log(Level.INFO, "...new commitment found asking for proof");
+				boolean result = this.checkCommitment(newCommitment, newCommitmentNumber);
+				this.currentCommitmentNumber = newCommitmentNumber;
+				this.currentCommitment = newCommitment;
+			}
+		}
 	}
 	
 	public void shutdown() throws InterruptedException {
@@ -185,29 +208,39 @@ public class MockWarehouse {
 	
 	
 	private boolean checkCommitment(byte[] commitment, int commitmentNumber) {
-		logger.log(Level.INFO, "...checking commtiment# : "+commitmentNumber);
+		logger.log(Level.INFO, "...checking commtiment : #"+commitmentNumber+
+				" | "+Utils.byteArrayAsHexString(commitment));
 		logger.log(Level.INFO, "...asking for proof from the server");
-		List<byte[]> adsKeys = this.account.getADSKeys().stream().collect(Collectors.toList());
-		MPTDictionaryPartial mpt = this.getPath(adsKeys, this.currentCommitmentNumber);
+		List<byte[]> adsIds = this.adsStringToKey.values().stream().collect(Collectors.toList());
+		MPTDictionaryPartial mpt = this.getPath(adsIds, commitmentNumber);
 		logger.log(Level.INFO, "...checking proof");
 		// check that the auth proof is correct
 		try {
-			for(byte[] adsKey : adsKeys) {
-				String adsKeystring = Utils.byteArrayAsHexString(adsKey);
-				if(!Arrays.equals(mpt.get(adsKey), 
-						this.adsKeyToADS.get(adsKeystring).commitment())){
-					// for now just throw error, but really should return false isntead
-					throw new RuntimeException("data does not match");
+			for(Map.Entry<String, byte[]> kv : this.adsStringToKey.entrySet()) {
+				String adsIdAsString = kv.getKey();
+				byte[] adsId = kv.getValue();
+				byte[] cmt = this.adsKeyToADS.get(adsIdAsString).commitment();
+				logger.log(Level.INFO, "...checking "+adsIdAsString+" -> "+
+						Utils.byteArrayAsHexString(cmt));
+				if(!Arrays.equals(mpt.get(adsId), cmt)){
+					logger.log(Level.WARNING, "...MAPPING DOES NOT MATCH");
+					System.err.println("MAPPING DOES NOT MATCH");
+					return false;
 				}
 			}
+			logger.log(Level.INFO, "...checking that commitment matches");
 			if(!Arrays.equals(commitment, mpt.commitment())) {
-				throw new RuntimeException("commitment does not match");
+				logger.log(Level.WARNING, "...COMMITMENT DOES NOT MATCH");
+				System.err.println("COMMITMENT DOES NOT MATCH");
+				return false;
 			}
+			logger.log(Level.INFO, "...commitment accepted");
+			return true;
 		} catch (InsufficientAuthenticationDataException e) {
 			e.printStackTrace();
+			System.err.println("Error!");
 			throw new RuntimeException("bad proof!");
 		}
-		return true;
 	}
 
 	
@@ -229,6 +262,10 @@ public class MockWarehouse {
 		depositors.add(alice);
 		depositors.add(bob);
 		MockWarehouse warehouseClient = new MockWarehouse(warehouse, depositors, host, port);
+		
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(warehouseClient, 0, 5, TimeUnit.SECONDS);
+		
 		Scanner sc = new Scanner(System.in);
 		while(true) {
 			sc.nextLine();
