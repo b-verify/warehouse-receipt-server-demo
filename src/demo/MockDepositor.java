@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +43,7 @@ import pki.PKIDirectory;
 import server.BVerifyServer;
 
 
-public class MockDepositor {
+public class MockDepositor implements Runnable {
 	private static final Logger logger = Logger.getLogger(BVerifyServer.class.getName());
 
 
@@ -96,11 +98,39 @@ public class MockDepositor {
 		logger.log(Level.INFO, "...asking for a proof, checking latest commitment");
 		this.checkCommitment(this.currentCommitment, this.currentCommitmentNumber);
 		logger.log(Level.INFO, "...setup complete!");
-		
+				
+	}
+	
+	/**
+	 * Periodically the mock depositor polls the serve and approves any requests
+	 */
+	@Override
+	public void run() {
+		logger.log(Level.INFO, "...polling server for forwarded requests");
+		IssueReceiptRequest request = this.getForwarded();
+		if(request != null) {
+			logger.log(Level.INFO, "...request recieved, approving");
+			IssueReceiptRequest approvedRequest = this.approveRequestAndApply(request);
+			logger.log(Level.INFO, "...submitting approved request to server");
+			this.submitApprovedRequest(approvedRequest);
+		}
+		logger.log(Level.INFO, "...polling sever for new commitments");
+		List<byte[]> commitments  = this.getCommitments();
+		// get the new commitments if any
+		List<byte[]> newCommitments = commitments.subList(this.currentCommitmentNumber+1, commitments.size());
+		if(newCommitments.size() > 0) {
+			for(byte[] newCommitment : newCommitments) {
+				int newCommitmentNumber = this.currentCommitmentNumber + 1;
+				logger.log(Level.INFO, "...new commitment #"+newCommitmentNumber);
+				this.checkCommitment(newCommitment, newCommitmentNumber);
+				this.currentCommitmentNumber = newCommitmentNumber;
+				this.currentCommitment = newCommitment;
+			}
+		}
 	}
 	
 	public void shutdown() throws InterruptedException {
-	    channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+	    this.channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 	}
 	
 	private List<byte[]> getCommitments() {
@@ -140,7 +170,10 @@ public class MockDepositor {
 				.setId(this.account.getIdAsString())
 				.build();
 		GetForwardedResponse response = this.blockingStub.getForwarded(request);
-		return response.getRequest();
+		if(response.hasRequest()) {
+			return response.getRequest();
+		}
+		return null;
 	}
 	
 	private IssueReceiptRequest approveRequestAndApply(IssueReceiptRequest request) {
@@ -169,9 +202,11 @@ public class MockDepositor {
 	}
 	
 	private boolean checkCommitment(byte[] commitment, int commitmentNumber) {
-		logger.log(Level.INFO, "...checking commtiment# : "+commitmentNumber);
+		logger.log(Level.INFO, "...checking commtiment# : "+commitmentNumber+
+				"| "+Utils.byteArrayAsHexString(commitment));
 		logger.log(Level.INFO, "...asking for proof from the server");
 		MPTDictionaryPartial mpt = this.getPath(Arrays.asList(this.adsKey), this.currentCommitmentNumber);
+		System.out.println("PROOF RECIEVED: "+mpt);
 		logger.log(Level.INFO, "...checking proof");
 		// check that the auth proof is correct
 		try {
@@ -193,7 +228,7 @@ public class MockDepositor {
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = null;
+		String host = "127.0.0.1";
 		int port = 50051;
 		/**
 		 * Alice: 59d6dd79-4bbe-4043-ba3e-e2a91e2376ae
@@ -202,11 +237,24 @@ public class MockDepositor {
 		 */
 		Account alice = pki.getAccount("59d6dd79-4bbe-4043-ba3e-e2a91e2376ae");
 		MockDepositor aliceClient = new MockDepositor(alice, host, port);
+		
+		// create a thread that polls the server and automatically approves any requests
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(aliceClient, 0, 1, TimeUnit.SECONDS);
+		
+		
 		Scanner sc = new Scanner(System.in);
 		sc.nextLine();
 		System.out.println("Press enter to shutdown");
 		sc.close();
 		System.out.println("shutdown");
+		try {
+			aliceClient.shutdown();
+			exec.shutdown();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			throw new RuntimeException("something went wrong trying to shutdown");
+		}
 	}
 	
 	

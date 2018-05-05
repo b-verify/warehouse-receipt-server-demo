@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -111,7 +112,9 @@ public class MockWarehouse {
 		logger.log(Level.INFO, "...setup complete!");
 	}
 	
-
+	public void shutdown() throws InterruptedException {
+	    this.channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+	}
 	
 	public void deposit(Account depositor) {
 		this.deposit(BootstrapMockSetup.generateReceipt(this.account, depositor), depositor);
@@ -211,8 +214,8 @@ public class MockWarehouse {
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = "18.85.22.252";
-		int port = 1099;
+		String host = "127.0.0.1";
+		int port = 50051;
 		/**
 		 * Alice: 59d6dd79-4bbe-4043-ba3e-e2a91e2376ae
 		 * Bob: b132bbfa-98bc-4e5d-b32d-f78d603600f5

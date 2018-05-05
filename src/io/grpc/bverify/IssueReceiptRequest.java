@@ -4,6 +4,12 @@
 package io.grpc.bverify;
 
 /**
+ * <pre>
+ **
+ * 	Request to Issue A Receipt along with 
+ *	the required signatures
+ * </pre>
+ *
  * Protobuf type {@code api.IssueReceiptRequest}
  */
 public  final class IssueReceiptRequest extends
@@ -316,6 +322,12 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   **
+   * 	Request to Issue A Receipt along with 
+   *	the required signatures
+   * </pre>
+   *
    * Protobuf type {@code api.IssueReceiptRequest}
    */
   public static final class Builder extends

@@ -90,10 +90,12 @@ message CommitmentsResponse {
 
 
 
+/** ACTUAL DATA FORMATS **/
 
-
-
-
+/**
+* 	Request to Issue A Receipt along with 
+*	the required signatures
+*/
 message IssueReceiptRequest {
 	Receipt receipt = 1;
 	bytes signature_warehouse = 2;

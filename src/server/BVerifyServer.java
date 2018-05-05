@@ -46,7 +46,7 @@ public class BVerifyServer {
 		int port = 50051;
 		server = ServerBuilder.forPort(port).addService(
 				new BVerifyServerImpl(this.pki, this.adsManager)).build().start();
-		logger.info("Server started, listening on " + port);
+		logger.info("...server started, listening on " + port);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -142,12 +142,16 @@ public class BVerifyServer {
 			synchronized(this) {
 				requestMsg = this.approvalRequests.get(id);
 			}
+			io.grpc.bverify.GetForwardedResponse response;
 			if(requestMsg != null) {
-				io.grpc.bverify.GetForwardedResponse response = io.grpc.bverify.GetForwardedResponse.newBuilder()
+				response = io.grpc.bverify.GetForwardedResponse.newBuilder()
 						.setRequest(requestMsg)
 						.build();
-				responseObserver.onNext(response);
+			}else {
+				response = io.grpc.bverify.GetForwardedResponse.newBuilder()
+						.build();
 			}
+			responseObserver.onNext(response);
 			responseObserver.onCompleted();
 		}
 
@@ -203,8 +207,10 @@ public class BVerifyServer {
 		@Override
 		public void getDataRequest(io.grpc.bverify.DataRequest request,
 				io.grpc.stub.StreamObserver<io.grpc.bverify.DataResponse> responseObserver) {
-			logger.log(Level.INFO, "GetDataRequest("+Utils.byteArrayAsHexString(request.getAdsId().toByteArray())+")");
-			Set<io.grpc.bverify.Receipt> adsData = this.adsManager.getADSData(request.getAdsId().toByteArray());
+			logger.log(Level.INFO, "GetDataRequest("+Utils.byteArrayAsHexString(request.getAdsId().toByteArray())+
+					", "+request.getCommitmentNumber()+")");
+			Set<io.grpc.bverify.Receipt> adsData = this.adsManager.getADSData(request.getAdsId().toByteArray(),
+					request.getCommitmentNumber());
 			io.grpc.bverify.DataResponse response = io.grpc.bverify.DataResponse.newBuilder()
 					.addAllReceipts(adsData)
 					.build();
@@ -233,7 +239,7 @@ public class BVerifyServer {
 			logger.log(Level.INFO, "GetCommitments()");
 			CommitmentsResponse.Builder responseBuilder = CommitmentsResponse.newBuilder();
 			int numberOfCommitments = this.adsManager.getCurrentCommitmentNumber();
-			for(int i = 0; i < numberOfCommitments; i++) {
+			for(int i = 0; i <= numberOfCommitments; i++) {
 				byte[] commitment = this.adsManager.getCommitment(i);
 				responseBuilder.addCommitments(ByteString.copyFrom(commitment));
 			}
