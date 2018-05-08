@@ -251,12 +251,15 @@ public class MockWarehouse implements Runnable {
 		int port = 50051;
 		/**
 		 * Alice: 7795ad85-9a9e-47a4-b7fc-4a58c8697d21
-		 * Bob: b132bbfa-98bc-4e5d-b32d-f78d603600f5
-		 * Warehouse: 495ead33-b08d-4a47-adf0-b4664043f762
+		 * Bob: 495ead33-b08d-4a47-adf0-b4664043f762
+		 * Warehouse: 86ab72e2-f404-4549-babb-ad332b85f07a
 		 */
+		for(Account a : pki.getAllAccounts()) {
+			System.out.println(a.getFirstName() + a.getIdAsString());
+		}
 		Account alice = pki.getAccount("7795ad85-9a9e-47a4-b7fc-4a58c8697d21");
-		Account bob = pki.getAccount("b132bbfa-98bc-4e5d-b32d-f78d603600f5");
-		Account warehouse = pki.getAccount("495ead33-b08d-4a47-adf0-b4664043f762");
+		Account bob = pki.getAccount("495ead33-b08d-4a47-adf0-b4664043f762");
+		Account warehouse = pki.getAccount("86ab72e2-f404-4549-babb-ad332b85f07a");
 		
 		List<Account> depositors = new ArrayList<>();
 		depositors.add(alice);

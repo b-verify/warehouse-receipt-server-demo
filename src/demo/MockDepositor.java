@@ -239,8 +239,8 @@ public class MockDepositor implements Runnable {
 		int port = 50051;
 		/**
 		 * Alice: 7795ad85-9a9e-47a4-b7fc-4a58c8697d21
-		 * Bob: b132bbfa-98bc-4e5d-b32d-f78d603600f5
-		 * Warehouse: 495ead33-b08d-4a47-adf0-b4664043f762
+		 * Bob: 495ead33-b08d-4a47-adf0-b4664043f762
+		 * Warehouse: 86ab72e2-f404-4549-babb-ad332b85f07a
 		 */
 		Account alice = pki.getAccount("7795ad85-9a9e-47a4-b7fc-4a58c8697d21");
 		MockDepositor aliceClient = new MockDepositor(alice, host, port);
