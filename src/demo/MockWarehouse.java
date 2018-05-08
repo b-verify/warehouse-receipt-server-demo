@@ -247,7 +247,7 @@ public class MockWarehouse implements Runnable {
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = "127.0.0.1";
+		String host = "18.85.22.252";
 		int port = 50051;
 		/**
 		 * Alice: 7795ad85-9a9e-47a4-b7fc-4a58c8697d21
