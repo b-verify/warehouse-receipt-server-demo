@@ -14,6 +14,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -81,6 +82,20 @@ public class CryptographicSignature {
 		}
 	}
 	
+	public static PublicKey loadPublickKey(byte[] encoded) {
+		KeyFactory keyFactory;
+		try {
+			keyFactory = KeyFactory.getInstance(TYPE);
+			X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(
+					encoded);
+			PublicKey pubKey = keyFactory.generatePublic(publicKeySpec);
+			return pubKey;
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	
 	public static PrivateKey loadPrivateKey(String file) {
 		try {
 			File f = new File(file);
@@ -97,6 +112,21 @@ public class CryptographicSignature {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+	
+	
+	public static PrivateKey loadPrivateKey(byte[] encoded) {
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance(TYPE);
+			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(
+					encoded);
+			PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+			return privateKey;
+		}catch(Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	
+	
 	
 	public static byte[] sign(byte[] message, PrivateKey privKey) {
 		try {

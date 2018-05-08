@@ -12,6 +12,10 @@ import java.security.PublicKey;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import crpyto.CryptographicSignature;
 
@@ -40,9 +44,18 @@ public class Account implements Serializable, Comparable<Account> {
 		// along with pubKeys
 		KeyPair keys = CryptographicSignature.generateNewKeyPair();
 		this.pubKey = keys.getPublic();
-		this.privKey = keys.getPrivate();
-		
+		this.privKey = keys.getPrivate();		
 		this.adsKeys = new HashSet<>();
+	}
+	
+	public Account(String firstName, String lastName, UUID uuid, 
+			PublicKey pubKey, PrivateKey privKey, Set<byte[]> adsIds) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.id = uuid;
+		this.pubKey = pubKey;
+		this.privKey = privKey;
+		this.adsKeys = adsIds;
 	}
 	
 	public void addADSKey(byte[] adsKey) {
@@ -121,6 +134,39 @@ public class Account implements Serializable, Comparable<Account> {
 		}catch(Exception e) {
 			return null;
 		}	
+	}
+	
+	public serialization.generated.MptSerialization.Account serialize(){
+		serialization.generated.MptSerialization.Account msg = serialization.generated.MptSerialization.Account.newBuilder()
+				.setFirstName(this.firstName)
+				.setLastName(this.lastName)
+				.setUuid(this.id.toString())
+				.setEncodedPubkey(ByteString.copyFrom(this.pubKey.getEncoded()))
+				.setEncodedPrivkey(ByteString.copyFrom(this.privKey.getEncoded()))
+				.addAllAdsIds(this.adsKeys.stream().map(x -> ByteString.copyFrom(x)).collect(Collectors.toList()))
+				.build();
+		return msg;
+	}
+	
+	public static Account fromBytes(byte[] asBytes) {
+		try {
+			serialization.generated.MptSerialization.Account account = 
+					serialization.generated.MptSerialization.Account.parseFrom(asBytes);
+			PublicKey pubKey = CryptographicSignature.loadPublickKey(
+					account.getEncodedPubkey().toByteArray());
+			PrivateKey privKey = CryptographicSignature.loadPrivateKey(
+					account.getEncodedPrivkey().toByteArray());	
+			Set<byte[]> adsIds = new HashSet<>();
+			for(ByteString adsId : account.getAdsIdsList()) {
+				adsIds.add(adsId.toByteArray());
+			}
+			UUID id = UUID.fromString(account.getUuid());
+			return new Account(account.getFirstName(), account.getLastName(),
+					id, pubKey, privKey, adsIds);
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 	
 	@Override
