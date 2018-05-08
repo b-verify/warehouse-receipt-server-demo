@@ -159,7 +159,7 @@ public class BootstrapMockSetup {
 	
 	public static void main(String[] args) {
 		// runs the bootstrap to setup the mock data
-		String base = "/home/henryaspegren/eclipse-workspace/b_verify-server/demos/";
+		String base = "/home/henryaspegren/Documents/Dropbox (MIT)/Academics/MIT/DCI/Project_Code/b_verify-server-demo/demos/";
 		BootstrapMockSetup.bootstrapSimpleDemo(base);
 	}
 }
