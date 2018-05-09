@@ -196,6 +196,7 @@ public class MockDepositor implements Runnable {
 		byte[] witness = CryptographicUtils.witnessReceipt(r);
 		if(request.getCurrentOwnerId().equals(this.account.getIdAsString())) {
 			logger.log(Level.INFO, "...removing receipt");
+			this.adsData.remove(r);
 			this.ads.delete(witness);
 			byte[] newRoot = this.ads.commitment();
 			logger.log(Level.INFO, "...NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
@@ -204,6 +205,7 @@ public class MockDepositor implements Runnable {
 		}
 		logger.log(Level.INFO, "...adding receipt");
 		this.ads.insert(witness);
+		this.adsData.add(r);
 		byte[] newRoot = this.ads.commitment();
 		logger.log(Level.INFO, "...NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
 		byte[] sig = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());
