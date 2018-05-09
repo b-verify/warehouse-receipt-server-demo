@@ -29,10 +29,13 @@ import io.grpc.bverify.CommitmentsResponse;
 import io.grpc.bverify.DataRequest;
 import io.grpc.bverify.DataResponse;
 import io.grpc.bverify.ForwardRequest;
+import io.grpc.bverify.GetForwardedRequest;
+import io.grpc.bverify.GetForwardedResponse;
 import io.grpc.bverify.IssueReceiptRequest;
 import io.grpc.bverify.PathRequest;
 import io.grpc.bverify.PathResponse;
 import io.grpc.bverify.Receipt;
+import io.grpc.bverify.TransferReceiptRequest;
 import mpt.core.InsufficientAuthenticationDataException;
 import mpt.core.InvalidSerializationException;
 import mpt.core.Utils;
@@ -47,7 +50,7 @@ public class MockWarehouse implements Runnable {
 
 	private final Account account;
 	
-	private final List<Account> depositors;
+	private final Map<String, Account> depositors;
 	
 	// data
 	private final Map<String, byte[]> adsStringToKey;
@@ -63,7 +66,7 @@ public class MockWarehouse implements Runnable {
 	private final BVerifyServerAPIBlockingStub blockingStub;
 	
 	public MockWarehouse(Account thisWarehouse, 
-			List<Account> depositors, String host, int port) {
+			List<Account> deps, String host, int port) {
 		logger.log(Level.INFO, "...loading mock warehouse connected to server on host: "+host+" port: "+port);
 
 		this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
@@ -71,11 +74,12 @@ public class MockWarehouse implements Runnable {
 
 	    
 		this.account = thisWarehouse;
-		this.depositors = depositors;
 		logger.log(Level.INFO, "...loading mock warehouse "+thisWarehouse.getFirstName());
 		logger.log(Level.INFO, "...with clients: ");
-		for(Account a : depositors) {
+		this.depositors = new HashMap<>();
+		for(Account a : deps) {
 			logger.log(Level.INFO, "..."+a.getFirstName());
+			this.depositors.put(a.getIdAsString(), a);
 		}
 		assert this.account.getADSKeys().size() == this.depositors.size();
 		logger.log(Level.INFO, "...cares about adses: "+
@@ -120,7 +124,15 @@ public class MockWarehouse implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.log(Level.INFO, "...polling sever for new commitments");
+		logger.log(Level.FINE, "...polling server for forwarded requests");
+		GetForwardedResponse approvals = this.getForwarded();
+		if(approvals.hasTransferReceipt()) {
+			logger.log(Level.INFO, "...transfer request recieved");
+			ForwardRequest forward = this.approveTransferRequestAndApply(approvals.getTransferReceipt());
+			logger.log(Level.INFO, "...forwarding request to "+forward.getForwardToId());
+			this.blockingStub.forward(forward);
+		}
+		logger.log(Level.FINE, "...polling sever for new commitments");
 		List<byte[]> commitments  = this.getCommitments();
 		// get the new commitments if any
 		List<byte[]> newCommitments = commitments.subList(this.currentCommitmentNumber+1, commitments.size());
@@ -133,6 +145,49 @@ public class MockWarehouse implements Runnable {
 				this.currentCommitment = newCommitment;
 			}
 		}
+	}
+	
+	private ForwardRequest approveTransferRequestAndApply(TransferReceiptRequest request) {
+		Receipt receipt = request.getReceipt();
+		Account currentOwner = this.depositors.get(request.getCurrentOwnerId());
+		Account newOwner = this.depositors.get(request.getNewOwnerId());
+		logger.log(Level.INFO, "... transfering "+receipt+" from "+currentOwner+" -> "+newOwner);
+		
+		List<Account> currentOwnerADSAccounts = Arrays.asList(this.account, currentOwner);
+		String currentOwnerADSId = Utils.byteArrayAsHexString(
+				CryptographicUtils.listOfAccountsToADSKey(currentOwnerADSAccounts));
+		AuthenticatedSetServer currentOwnerADS = this.adsKeyToADS.get(currentOwnerADSId);
+		Set<Receipt> currentOwnerData = this.adsKeyToADSData.get(currentOwnerADSId);
+		
+		List<Account> newOwnerADSAccounts = Arrays.asList(this.account, newOwner);
+		String newOwnerADSId = Utils.byteArrayAsHexString(
+				CryptographicUtils.listOfAccountsToADSKey(newOwnerADSAccounts));
+		AuthenticatedSetServer newOwnerADS = this.adsKeyToADS.get(newOwnerADSId);
+		Set<Receipt> newOwnerData = this.adsKeyToADSData.get(newOwnerADSId);
+		
+		byte[] receiptWitness = CryptographicUtils.witnessReceipt(receipt);
+
+		currentOwnerData.remove(receipt);
+		currentOwnerADS.delete(receiptWitness);
+		byte[] currentOwnerNewCmt = currentOwnerADS.commitment();
+		byte[] signatureCurrent = CryptographicSignature.sign(currentOwnerNewCmt, this.account.getPrivateKey());
+		logger.log(Level.INFO, "... current owner ADS "+currentOwnerADSId+ 
+				" NEW ROOT: "+Utils.byteArrayAsHexString(currentOwnerNewCmt));
+		
+		newOwnerData.add(receipt);
+		newOwnerADS.insert(receiptWitness);
+		byte[] newOwnerCmt = newOwnerADS.commitment();
+		byte[] signatureNew = CryptographicSignature.sign(newOwnerCmt, this.account.getPrivateKey());
+		logger.log(Level.INFO, "... new owner ADS "+newOwnerADSId+ 
+				" NEW ROOT: "+Utils.byteArrayAsHexString(newOwnerCmt));
+		
+		request = request.toBuilder().setSignatureWarehouseCurrent(ByteString.copyFrom(signatureCurrent))
+		.setSignatureWarehouseNew(ByteString.copyFrom(signatureNew)).build();
+		ForwardRequest forward = ForwardRequest.newBuilder()
+				.setForwardToId(request.getNewOwnerId())
+				.setTransferReceipt(request)
+				.build();
+		return forward;
 	}
 	
 	public void shutdown() throws InterruptedException {
@@ -165,13 +220,19 @@ public class MockWarehouse implements Runnable {
 				.build();
 		
 		ForwardRequest requestToForward = ForwardRequest.newBuilder()
-				.setRequest(request)
+				.setIssueReceipt(request)
 				.setForwardToId(depositor.getIdAsString())
 				.build();
 		logger.log(Level.INFO, "...forwarding request to client via server");
 		this.blockingStub.forward(requestToForward);
 	}
 
+	private GetForwardedResponse getForwarded() {
+		GetForwardedRequest request = GetForwardedRequest.newBuilder()
+				.setId(this.account.getIdAsString())
+				.build();
+		return this.blockingStub.getForwarded(request);
+	}
 	
 	private List<byte[]> getCommitments() {
 		CommitmentsRequest request = CommitmentsRequest.newBuilder().build();
@@ -245,9 +306,12 @@ public class MockWarehouse implements Runnable {
 
 	
 	public static void main(String[] args) {
+		if(args.length != 1) {
+			System.out.println("Usage: <host> \n of b_verify server");
+		}		
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = "18.85.22.252";
+		String host = args[0];
 		int port = 50051;
 		/**
 		 * Alice: 7795ad85-9a9e-47a4-b7fc-4a58c8697d21
@@ -269,10 +333,16 @@ public class MockWarehouse implements Runnable {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(warehouseClient, 0, 5, TimeUnit.SECONDS);
 		
+		try {
+			Thread.sleep(10*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Scanner sc = new Scanner(System.in);
 		while(true) {
+			System.out.println("[Press enter to issue receipt to ALICE]");
 			sc.nextLine();
-			System.out.println("Press enter to issue receipt to alice");
 			warehouseClient.deposit(alice);
 		}
 	}

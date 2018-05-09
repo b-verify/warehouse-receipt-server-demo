@@ -24,6 +24,7 @@ import io.grpc.bverify.CommitmentsRequest;
 import io.grpc.bverify.CommitmentsResponse;
 import io.grpc.bverify.DataRequest;
 import io.grpc.bverify.DataResponse;
+import io.grpc.bverify.ForwardRequest;
 import io.grpc.bverify.GetForwardedRequest;
 import io.grpc.bverify.GetForwardedResponse;
 import io.grpc.bverify.IssueReceiptRequest;
@@ -32,6 +33,7 @@ import io.grpc.bverify.PathResponse;
 import io.grpc.bverify.Receipt;
 import io.grpc.bverify.SubmitRequest;
 import io.grpc.bverify.SubmitResponse;
+import io.grpc.bverify.TransferReceiptRequest;
 import mpt.core.InsufficientAuthenticationDataException;
 import mpt.core.InvalidSerializationException;
 import mpt.core.Utils;
@@ -106,15 +108,19 @@ public class MockDepositor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.log(Level.INFO, "...polling server for forwarded requests");
-		IssueReceiptRequest request = this.getForwarded();
-		if(request != null) {
-			logger.log(Level.INFO, "...request recieved, approving");
-			IssueReceiptRequest approvedRequest = this.approveRequestAndApply(request);
+		logger.log(Level.FINE, "...polling server for forwarded requests");
+		GetForwardedResponse approvals = this.getForwarded();
+		if(approvals.hasIssueReceipt()) {
+			IssueReceiptRequest approvedRequest = this.approveRequestAndApply(approvals.getIssueReceipt());
 			logger.log(Level.INFO, "...submitting approved request to server");
 			this.submitApprovedRequest(approvedRequest);
 		}
-		logger.log(Level.INFO, "...polling sever for new commitments");
+		if(approvals.hasTransferReceipt()) {
+			TransferReceiptRequest approvedRequest = this.approveTransferRequestAndApply(approvals.getTransferReceipt());
+			logger.log(Level.INFO, "...submitting approved request to server");
+			this.submitApprovedRequest(approvedRequest);
+		}
+		logger.log(Level.FINE, "...polling sever for new commitments");
 		List<byte[]> commitments  = this.getCommitments();
 		// get the new commitments if any
 		List<byte[]> newCommitments = commitments.subList(this.currentCommitmentNumber+1, commitments.size());
@@ -122,7 +128,7 @@ public class MockDepositor implements Runnable {
 			for(byte[] newCommitment : newCommitments) {
 				int newCommitmentNumber = this.currentCommitmentNumber + 1;
 				logger.log(Level.INFO, "...new commitment found asking for proof");
-				boolean result = this.checkCommitment(newCommitment, newCommitmentNumber);
+				this.checkCommitment(newCommitment, newCommitmentNumber);
 				this.currentCommitmentNumber = newCommitmentNumber;
 				this.currentCommitment = newCommitment;
 			}
@@ -165,19 +171,15 @@ public class MockDepositor implements Runnable {
 		return res;
 	}
 	
-	private IssueReceiptRequest getForwarded() {
+	private GetForwardedResponse getForwarded() {
 		GetForwardedRequest request = GetForwardedRequest.newBuilder()
 				.setId(this.account.getIdAsString())
 				.build();
-		GetForwardedResponse response = this.blockingStub.getForwarded(request);
-		if(response.hasRequest()) {
-			return response.getRequest();
-		}
-		return null;
+		return this.blockingStub.getForwarded(request);
 	}
 	
 	private IssueReceiptRequest approveRequestAndApply(IssueReceiptRequest request) {
-		logger.log(Level.INFO, "...approving request: "+request);
+		logger.log(Level.INFO, "...approving issue receipt request: "+request);
 		Receipt r = request.getReceipt();
 		this.adsData.add(r);
 		byte[] witness = CryptographicUtils.witnessReceipt(r);
@@ -188,12 +190,43 @@ public class MockDepositor implements Runnable {
 		return request.toBuilder().setSignatureDepositor(ByteString.copyFrom(sig)).build();
 	}
 	
+	private TransferReceiptRequest approveTransferRequestAndApply(TransferReceiptRequest request) {
+		logger.log(Level.INFO, "...approving transfer request: "+request);
+		Receipt r = request.getReceipt();
+		byte[] witness = CryptographicUtils.witnessReceipt(r);
+		if(request.getCurrentOwnerId().equals(this.account.getIdAsString())) {
+			logger.log(Level.INFO, "...removing receipt");
+			this.ads.delete(witness);
+			byte[] newRoot = this.ads.commitment();
+			logger.log(Level.INFO, "...NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
+			byte[] sig = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());
+			return request.toBuilder().setSignatureCurrentOwner(ByteString.copyFrom(sig)).build();
+		}
+		logger.log(Level.INFO, "...adding receipt");
+		this.ads.insert(witness);
+		byte[] newRoot = this.ads.commitment();
+		logger.log(Level.INFO, "...NEW ADS ROOT: "+Utils.byteArrayAsHexString(newRoot));
+		byte[] sig = CryptographicSignature.sign(newRoot, this.account.getPrivateKey());
+		return request.toBuilder().setSignatureNewOwner(ByteString.copyFrom(sig)).build();
+	}
+	
 	private boolean submitApprovedRequest(IssueReceiptRequest request) {
 		logger.log(Level.INFO, "...submitting request to server: "+request);
 		assert request.getSignatureDepositor().toByteArray() != null;
 		assert request.getSignatureWarehouse().toByteArray() != null;
 		SubmitRequest requestToSend = SubmitRequest.newBuilder()
-				.setRequest(request)
+				.setIssueReceipt(request)
+				.build();
+		SubmitResponse response = this.blockingStub.submit(requestToSend);
+		boolean accepted = response.getAccepted();
+		logger.log(Level.INFO,"...accepted? - "+accepted);
+		return accepted;
+	}
+	
+	private boolean submitApprovedRequest(TransferReceiptRequest request) {
+		logger.log(Level.INFO, "...submitting request to server: "+request);
+		SubmitRequest requestToSend = SubmitRequest.newBuilder()
+				.setTransferReceipt(request)
 				.build();
 		SubmitResponse response = this.blockingStub.submit(requestToSend);
 		boolean accepted = response.getAccepted();
@@ -231,34 +264,79 @@ public class MockDepositor implements Runnable {
 		}
 	}
 
+	private void transferReceipt(Account recepient) {
+		Receipt toTransfer = null;
+		if(this.adsData.size() == 0) {
+			logger.log(Level.WARNING, "...no receipts remaining!");
+			return;
+		}
+		for(Receipt r : this.adsData) {
+			toTransfer = r;
+			break;
+		}
+		logger.log(Level.INFO, "...transferring receipt: "+toTransfer+" -> "+recepient);
+		TransferReceiptRequest request = TransferReceiptRequest.newBuilder()
+				.setReceipt(toTransfer)
+				.setCurrentOwnerId(this.account.getIdAsString())
+				.setNewOwnerId(recepient.getIdAsString())
+				.build();
+		request = this.approveTransferRequestAndApply(request);
+		ForwardRequest forward = ForwardRequest.newBuilder()
+				.setTransferReceipt(request)
+				.setForwardToId(toTransfer.getWarehouseId())
+				.build();
+		logger.log(Level.INFO, "...forwarding to: "+toTransfer.getWarehouseId());
+		this.blockingStub.forward(forward);
+	}
 	
 	public static void main(String[] args) {
 		String base = System.getProperty("user.dir")  + "/demos/";
 		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		String host = "18.85.22.252";
 		int port = 50051;
+		if(args.length != 2) {
+			System.out.println("Usage: <host> <ALICE|BOB>");
+		}
+		String host = args[0];
 		/**
 		 * Alice: 7795ad85-9a9e-47a4-b7fc-4a58c8697d21
 		 * Bob: 495ead33-b08d-4a47-adf0-b4664043f762
 		 * Warehouse: 86ab72e2-f404-4549-babb-ad332b85f07a
 		 */
 		Account alice = pki.getAccount("7795ad85-9a9e-47a4-b7fc-4a58c8697d21");
-		MockDepositor aliceClient = new MockDepositor(alice, host, port);
-		
-		// create a thread that polls the server and automatically approves any requests
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(aliceClient, 0, 5, TimeUnit.SECONDS);
-		Scanner sc = new Scanner(System.in);
-		sc.nextLine();
-		System.out.println("Press enter to shutdown");
-		sc.close();
-		System.out.println("shutdown");
-		try {
-			aliceClient.shutdown();
-			exec.shutdown();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException("something went wrong trying to shutdown");
+		Account bob = pki.getAccount("495ead33-b08d-4a47-adf0-b4664043f762");
+
+		if(args[1].equals("ALICE")) {
+			MockDepositor aliceClient = new MockDepositor(alice, host, port);
+			// create a thread that polls the server and automatically approves any requests
+			ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+			exec.scheduleAtFixedRate(aliceClient, 0, 5, TimeUnit.SECONDS);
+			try {
+				Thread.sleep(10*1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Scanner sc = new Scanner(System.in);
+			while(true) {
+				System.out.println("[Press enter to transfer a receipt to Bob!]");
+				sc.nextLine();
+				aliceClient.transferReceipt(bob);
+			}
+		}else {
+			MockDepositor bobClient = new MockDepositor(bob, host, port);
+			// create a thread that polls the server and automatically approves any requests
+			ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+			exec.scheduleAtFixedRate(bobClient, 0, 5, TimeUnit.SECONDS);
+			try {
+				Thread.sleep(5*1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Scanner sc = new Scanner(System.in);
+			while(true) {
+				System.out.println("[Press enter to transfer a receipt to Alice!]");
+				sc.nextLine();
+				bobClient.transferReceipt(alice);
+			}
 		}
 	}
 	

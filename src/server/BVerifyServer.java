@@ -20,6 +20,7 @@ import io.grpc.bverify.BVerifyServerAPIGrpc.BVerifyServerAPIImplBase;
 import io.grpc.bverify.CommitmentsResponse;
 import io.grpc.bverify.IssueReceiptRequest;
 import io.grpc.bverify.Receipt;
+import io.grpc.bverify.TransferReceiptRequest;
 import mpt.core.Utils;
 import mpt.set.AuthenticatedSetServer;
 import pki.Account;
@@ -106,7 +107,7 @@ public class BVerifyServer {
 		private final PKIDirectory pki;
 		private final ADSManager adsManager;
 		// keep track of requests to forward to clients
-		private final Map<String, IssueReceiptRequest> approvalRequests;
+		private final Map<String, io.grpc.bverify.GetForwardedResponse> approvalRequests;
 		private static final Logger logger = Logger.getLogger(BVerifyServerImpl.class.getName());
 
 		
@@ -118,17 +119,32 @@ public class BVerifyServer {
 		
 		public void forward(io.grpc.bverify.ForwardRequest request,
 		        io.grpc.stub.StreamObserver<io.grpc.bverify.ForwardResponse> responseObserver) {
-			logger.log(Level.INFO, "ForwardRequest("+request.getRequest()+" to ", request.getForwardToId()+")");
+			logger.log(Level.INFO, "ForwardRequest("+request.getRequestCase()+" to ", request.getForwardToId()+")");
 			// forward the request to the depositor
-			synchronized(this){
-				this.approvalRequests.put(request.getForwardToId(), request.getRequest());
-
+			io.grpc.bverify.GetForwardedResponse toForward = null;
+			switch(request.getRequestCase()){
+			case ISSUE_RECEIPT:
+				toForward = io.grpc.bverify.GetForwardedResponse.newBuilder()
+				.setIssueReceipt(request.getIssueReceipt())
+				.build();
+				break;
+			case TRANSFER_RECEIPT:
+				toForward = io.grpc.bverify.GetForwardedResponse.newBuilder()
+				.setTransferReceipt(request.getTransferReceipt())
+				.build();
 			}
-			// add a response
-			io.grpc.bverify.ForwardResponse res =  io.grpc.bverify.ForwardResponse.newBuilder()
+			if(toForward != null) {
+				synchronized(this){
+					this.approvalRequests.put(request.getForwardToId(), toForward);
+				}
+				responseObserver.onNext(io.grpc.bverify.ForwardResponse.newBuilder()
 					.setAdded(true)
-					.build();
-			responseObserver.onNext(res);
+					.build());
+			}else {
+				responseObserver.onNext(io.grpc.bverify.ForwardResponse.newBuilder()
+						.setAdded(false)
+						.build());
+			}
 			responseObserver.onCompleted();
 		}
 
@@ -137,18 +153,13 @@ public class BVerifyServer {
 		        io.grpc.stub.StreamObserver<io.grpc.bverify.GetForwardedResponse> responseObserver) {
 			String id = request.getId();
 			logger.log(Level.INFO, "GetForwardedRequests("+id+")");
-			IssueReceiptRequest requestMsg;
 			// lookup requests to forward
+			io.grpc.bverify.GetForwardedResponse response = null;
 			synchronized(this) {
-				requestMsg = this.approvalRequests.get(id);
+				response = this.approvalRequests.get(id);
 				this.approvalRequests.remove(id);
 			}
-			io.grpc.bverify.GetForwardedResponse response;
-			if(requestMsg != null) {
-				response = io.grpc.bverify.GetForwardedResponse.newBuilder()
-						.setRequest(requestMsg)
-						.build();
-			}else {
+			if(response == null) {
 				response = io.grpc.bverify.GetForwardedResponse.newBuilder()
 						.build();
 			}
@@ -159,8 +170,86 @@ public class BVerifyServer {
 		@Override
 	    public void submit(io.grpc.bverify.SubmitRequest request,
 	            io.grpc.stub.StreamObserver<io.grpc.bverify.SubmitResponse> responseObserver) {
-			Receipt receipt = request.getRequest().getReceipt();
-			logger.log(Level.INFO, "Submit("+receipt+")");
+			boolean accepted = false;
+			switch(request.getRequestCase()) {
+			case ISSUE_RECEIPT:
+				accepted = this.submitIssueRequest(request.getIssueReceipt());
+				break;
+			case TRANSFER_RECEIPT:
+				accepted = this.submitTransferRequest(request.getTransferReceipt());
+			}
+			io.grpc.bverify.SubmitResponse response = io.grpc.bverify.SubmitResponse.newBuilder()
+					.setAccepted(accepted)
+					.build();
+			responseObserver.onNext(response);
+			responseObserver.onCompleted();
+		}
+		
+		private boolean submitTransferRequest(TransferReceiptRequest request) {
+			Receipt receipt = request.getReceipt();
+			Account warehouse = this.pki.getAccount(receipt.getWarehouseId());
+			Account currentOwner = this.pki.getAccount(request.getCurrentOwnerId());
+			Account newOwner = this.pki.getAccount(request.getNewOwnerId());
+			logger.log(Level.INFO, "TransferReceiptRequest("+receipt+" from "+currentOwner+" --> "+newOwner+")");
+			
+			List<Account> currentOwnerADSAccounts = Arrays.asList(warehouse, currentOwner);
+			byte[] currentOwnerADSId = CryptographicUtils.listOfAccountsToADSKey(currentOwnerADSAccounts);
+			AuthenticatedSetServer currentOwnerADS = this.adsManager.getADS(currentOwnerADSId);
+			Set<Receipt> currentOwnerData = this.adsManager.getADSData(currentOwnerADSId);
+			
+			List<Account> newOwnerADSAccounts = Arrays.asList(warehouse, newOwner);
+			byte[] newOwnerADSId = CryptographicUtils.listOfAccountsToADSKey(newOwnerADSAccounts);
+			AuthenticatedSetServer newOwnerADS = this.adsManager.getADS(newOwnerADSId);
+			Set<Receipt> newOwnerData = this.adsManager.getADSData(newOwnerADSId);
+			
+			byte[] receiptWitness = CryptographicUtils.witnessReceipt(receipt);
+
+			currentOwnerData.remove(receipt);
+			currentOwnerADS.delete(receiptWitness);
+			byte[] currentOwnerNewCmt = currentOwnerADS.commitment();
+			
+			boolean signedWarehouseCurrent = CryptographicSignature.verify(currentOwnerNewCmt, 
+					request.getSignatureWarehouseCurrent().toByteArray(),
+					warehouse.getPublicKey());
+			boolean signedCurrentOwner = CryptographicSignature.verify(currentOwnerNewCmt, 
+					request.getSignatureCurrentOwner().toByteArray(),
+					currentOwner.getPublicKey());
+	
+			newOwnerData.add(receipt);
+			newOwnerADS.insert(receiptWitness);
+			byte[] newOwnerCmt = newOwnerADS.commitment();
+			
+			boolean signedWarehouseNew = CryptographicSignature.verify(newOwnerCmt, 
+					request.getSignatureWarehouseNew().toByteArray(),
+					warehouse.getPublicKey());
+			boolean signedNewOwner = CryptographicSignature.verify(newOwnerCmt, 
+					request.getSignatureNewOwner().toByteArray(),
+					newOwner.getPublicKey());
+			
+			if(signedWarehouseCurrent && signedCurrentOwner && signedWarehouseNew && signedNewOwner) {
+				logger.log(Level.INFO, "Update Accepted! : "
+						+Utils.byteArrayAsHexString(currentOwnerADSId)+"->"+
+						Utils.byteArrayAsHexString(currentOwnerNewCmt) + "\n"+
+						Utils.byteArrayAsHexString(newOwnerADSId)+"->"+
+						Utils.byteArrayAsHexString(newOwnerCmt));
+				
+				this.adsManager.updateADS(currentOwnerADSId, currentOwnerData, currentOwnerADS);
+				this.adsManager.updateADS(newOwnerADSId, newOwnerData, newOwnerADS);
+				// committing!
+				byte[] newCommitment = this.adsManager.commit();
+				logger.log(Level.INFO, "NEW COMMITMENT: "+
+						Utils.byteArrayAsHexString(newCommitment));
+				return true;
+			}
+			logger.log(Level.INFO, "Update rejected - signed current owner: "+
+					signedCurrentOwner+"|signed new owner: "+signedNewOwner+"|signed warehouse:"+
+					signedWarehouseCurrent+" "+signedWarehouseNew);
+			return false;
+		}
+		
+		private boolean submitIssueRequest(IssueReceiptRequest request) {
+			Receipt receipt = request.getReceipt();
+			logger.log(Level.INFO, "IssueReceiptRequest("+receipt+")");
 			Account warehouse = this.pki.getAccount(receipt.getWarehouseId());
 			Account depositor = this.pki.getAccount(receipt.getDepositorId());
 			List<Account> accounts = Arrays.asList(warehouse, depositor);
@@ -174,10 +263,10 @@ public class BVerifyServer {
 			adsData.add(receipt);
 			byte[] newRoot = ads.commitment();			
 			boolean signedWarehouse = CryptographicSignature.verify(newRoot, 
-					request.getRequest().getSignatureWarehouse().toByteArray(),
+					request.getSignatureWarehouse().toByteArray(),
 					warehouse.getPublicKey());
 			boolean signedDepositor = CryptographicSignature.verify(newRoot, 
-					request.getRequest().getSignatureDepositor().toByteArray(),
+					request.getSignatureDepositor().toByteArray(),
 					depositor.getPublicKey());
 			
 			// if both have signed, update the authentication
@@ -191,19 +280,11 @@ public class BVerifyServer {
 				byte[] newCommitment = this.adsManager.commit();
 				logger.log(Level.INFO, "NEW COMMITMENT: "+
 						Utils.byteArrayAsHexString(newCommitment));
-				io.grpc.bverify.SubmitResponse response = io.grpc.bverify.SubmitResponse.newBuilder()
-						.setAccepted(true)
-						.build();
-				responseObserver.onNext(response);
-			}else {
-				logger.log(Level.INFO, "Update rejected - signed depositor: "+
-							signedDepositor+"|signed warehouse: "+signedWarehouse);
-				io.grpc.bverify.SubmitResponse response = io.grpc.bverify.SubmitResponse.newBuilder()
-						.setAccepted(false)
-						.build();
-				responseObserver.onNext(response);
+				return true;
 			}
-			responseObserver.onCompleted();
+			logger.log(Level.INFO, "Update rejected - signed depositor: "+
+						signedDepositor+"|signed warehouse: "+signedWarehouse);
+			return false;
 		}
 
 		@Override
@@ -248,6 +329,7 @@ public class BVerifyServer {
 			responseObserver.onNext(responseBuilder.build());
 			responseObserver.onCompleted();
 		}
+		
 
 	}
 

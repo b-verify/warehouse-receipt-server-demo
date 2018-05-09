@@ -37,8 +37,11 @@ service BVerifyServerAPI {
 
 
 message ForwardRequest {
-	IssueReceiptRequest request = 1;
-	string forward_to_id = 2;
+	oneof request {
+		IssueReceiptRequest issue_receipt = 1;
+		TransferReceiptRequest transfer_receipt = 2;
+	}
+	string forward_to_id = 3;
 }
 
 message ForwardResponse {
@@ -50,11 +53,17 @@ message GetForwardedRequest {
 }
 
 message GetForwardedResponse {
-	IssueReceiptRequest request = 1;
+	oneof request {
+		IssueReceiptRequest issue_receipt = 1;
+		TransferReceiptRequest transfer_receipt = 2;
+	}
 }
 
-message SubmitRequest{
-	IssueReceiptRequest request = 1;
+message SubmitRequest {
+	oneof request {
+		IssueReceiptRequest issue_receipt = 1;
+		TransferReceiptRequest transfer_receipt = 2;
+	}
 }
 
 message SubmitResponse{
@@ -101,6 +110,17 @@ message IssueReceiptRequest {
 	bytes signature_warehouse = 2;
 	bytes signature_depositor = 3;
 }
+
+message TransferReceiptRequest {
+	Receipt receipt = 1;
+	string current_owner_id = 2;
+	string new_owner_id = 3;
+	bytes signature_warehouse_current = 4;
+	bytes signature_current_owner = 5;
+	bytes signature_warehouse_new = 6;
+	bytes signature_new_owner = 7;
+}
+
 
 /**
 *   Receipt (this is a stand in for arbitrary data)

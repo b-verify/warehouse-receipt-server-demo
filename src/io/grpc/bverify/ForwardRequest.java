@@ -52,18 +52,33 @@ private static final long serialVersionUID = 0L;
           }
           case 10: {
             io.grpc.bverify.IssueReceiptRequest.Builder subBuilder = null;
-            if (request_ != null) {
-              subBuilder = request_.toBuilder();
+            if (requestCase_ == 1) {
+              subBuilder = ((io.grpc.bverify.IssueReceiptRequest) request_).toBuilder();
             }
-            request_ = input.readMessage(io.grpc.bverify.IssueReceiptRequest.parser(), extensionRegistry);
+            request_ =
+                input.readMessage(io.grpc.bverify.IssueReceiptRequest.parser(), extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom(request_);
+              subBuilder.mergeFrom((io.grpc.bverify.IssueReceiptRequest) request_);
               request_ = subBuilder.buildPartial();
             }
-
+            requestCase_ = 1;
             break;
           }
           case 18: {
+            io.grpc.bverify.TransferReceiptRequest.Builder subBuilder = null;
+            if (requestCase_ == 2) {
+              subBuilder = ((io.grpc.bverify.TransferReceiptRequest) request_).toBuilder();
+            }
+            request_ =
+                input.readMessage(io.grpc.bverify.TransferReceiptRequest.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((io.grpc.bverify.TransferReceiptRequest) request_);
+              request_ = subBuilder.buildPartial();
+            }
+            requestCase_ = 2;
+            break;
+          }
+          case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
             forwardToId_ = s;
@@ -93,31 +108,100 @@ private static final long serialVersionUID = 0L;
             io.grpc.bverify.ForwardRequest.class, io.grpc.bverify.ForwardRequest.Builder.class);
   }
 
-  public static final int REQUEST_FIELD_NUMBER = 1;
-  private io.grpc.bverify.IssueReceiptRequest request_;
-  /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
-   */
-  public boolean hasRequest() {
-    return request_ != null;
-  }
-  /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
-   */
-  public io.grpc.bverify.IssueReceiptRequest getRequest() {
-    return request_ == null ? io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
-  }
-  /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
-   */
-  public io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder() {
-    return getRequest();
+  private int requestCase_ = 0;
+  private java.lang.Object request_;
+  public enum RequestCase
+      implements com.google.protobuf.Internal.EnumLite {
+    ISSUE_RECEIPT(1),
+    TRANSFER_RECEIPT(2),
+    REQUEST_NOT_SET(0);
+    private final int value;
+    private RequestCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static RequestCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static RequestCase forNumber(int value) {
+      switch (value) {
+        case 1: return ISSUE_RECEIPT;
+        case 2: return TRANSFER_RECEIPT;
+        case 0: return REQUEST_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  public RequestCase
+  getRequestCase() {
+    return RequestCase.forNumber(
+        requestCase_);
   }
 
-  public static final int FORWARD_TO_ID_FIELD_NUMBER = 2;
+  public static final int ISSUE_RECEIPT_FIELD_NUMBER = 1;
+  /**
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
+   */
+  public boolean hasIssueReceipt() {
+    return requestCase_ == 1;
+  }
+  /**
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
+   */
+  public io.grpc.bverify.IssueReceiptRequest getIssueReceipt() {
+    if (requestCase_ == 1) {
+       return (io.grpc.bverify.IssueReceiptRequest) request_;
+    }
+    return io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
+   */
+  public io.grpc.bverify.IssueReceiptRequestOrBuilder getIssueReceiptOrBuilder() {
+    if (requestCase_ == 1) {
+       return (io.grpc.bverify.IssueReceiptRequest) request_;
+    }
+    return io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
+  }
+
+  public static final int TRANSFER_RECEIPT_FIELD_NUMBER = 2;
+  /**
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  public boolean hasTransferReceipt() {
+    return requestCase_ == 2;
+  }
+  /**
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  public io.grpc.bverify.TransferReceiptRequest getTransferReceipt() {
+    if (requestCase_ == 2) {
+       return (io.grpc.bverify.TransferReceiptRequest) request_;
+    }
+    return io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  public io.grpc.bverify.TransferReceiptRequestOrBuilder getTransferReceiptOrBuilder() {
+    if (requestCase_ == 2) {
+       return (io.grpc.bverify.TransferReceiptRequest) request_;
+    }
+    return io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+  }
+
+  public static final int FORWARD_TO_ID_FIELD_NUMBER = 3;
   private volatile java.lang.Object forwardToId_;
   /**
-   * <code>string forward_to_id = 2;</code>
+   * <code>string forward_to_id = 3;</code>
    */
   public java.lang.String getForwardToId() {
     java.lang.Object ref = forwardToId_;
@@ -132,7 +216,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string forward_to_id = 2;</code>
+   * <code>string forward_to_id = 3;</code>
    */
   public com.google.protobuf.ByteString
       getForwardToIdBytes() {
@@ -160,11 +244,14 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (request_ != null) {
-      output.writeMessage(1, getRequest());
+    if (requestCase_ == 1) {
+      output.writeMessage(1, (io.grpc.bverify.IssueReceiptRequest) request_);
+    }
+    if (requestCase_ == 2) {
+      output.writeMessage(2, (io.grpc.bverify.TransferReceiptRequest) request_);
     }
     if (!getForwardToIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, forwardToId_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, forwardToId_);
     }
     unknownFields.writeTo(output);
   }
@@ -174,12 +261,16 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (request_ != null) {
+    if (requestCase_ == 1) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, getRequest());
+        .computeMessageSize(1, (io.grpc.bverify.IssueReceiptRequest) request_);
+    }
+    if (requestCase_ == 2) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, (io.grpc.bverify.TransferReceiptRequest) request_);
     }
     if (!getForwardToIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, forwardToId_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, forwardToId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -197,13 +288,23 @@ private static final long serialVersionUID = 0L;
     io.grpc.bverify.ForwardRequest other = (io.grpc.bverify.ForwardRequest) obj;
 
     boolean result = true;
-    result = result && (hasRequest() == other.hasRequest());
-    if (hasRequest()) {
-      result = result && getRequest()
-          .equals(other.getRequest());
-    }
     result = result && getForwardToId()
         .equals(other.getForwardToId());
+    result = result && getRequestCase().equals(
+        other.getRequestCase());
+    if (!result) return false;
+    switch (requestCase_) {
+      case 1:
+        result = result && getIssueReceipt()
+            .equals(other.getIssueReceipt());
+        break;
+      case 2:
+        result = result && getTransferReceipt()
+            .equals(other.getTransferReceipt());
+        break;
+      case 0:
+      default:
+    }
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -215,12 +316,20 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasRequest()) {
-      hash = (37 * hash) + REQUEST_FIELD_NUMBER;
-      hash = (53 * hash) + getRequest().hashCode();
-    }
     hash = (37 * hash) + FORWARD_TO_ID_FIELD_NUMBER;
     hash = (53 * hash) + getForwardToId().hashCode();
+    switch (requestCase_) {
+      case 1:
+        hash = (37 * hash) + ISSUE_RECEIPT_FIELD_NUMBER;
+        hash = (53 * hash) + getIssueReceipt().hashCode();
+        break;
+      case 2:
+        hash = (37 * hash) + TRANSFER_RECEIPT_FIELD_NUMBER;
+        hash = (53 * hash) + getTransferReceipt().hashCode();
+        break;
+      case 0:
+      default:
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -350,14 +459,10 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      if (requestBuilder_ == null) {
-        request_ = null;
-      } else {
-        request_ = null;
-        requestBuilder_ = null;
-      }
       forwardToId_ = "";
 
+      requestCase_ = 0;
+      request_ = null;
       return this;
     }
 
@@ -380,12 +485,22 @@ private static final long serialVersionUID = 0L;
 
     public io.grpc.bverify.ForwardRequest buildPartial() {
       io.grpc.bverify.ForwardRequest result = new io.grpc.bverify.ForwardRequest(this);
-      if (requestBuilder_ == null) {
-        result.request_ = request_;
-      } else {
-        result.request_ = requestBuilder_.build();
+      if (requestCase_ == 1) {
+        if (issueReceiptBuilder_ == null) {
+          result.request_ = request_;
+        } else {
+          result.request_ = issueReceiptBuilder_.build();
+        }
+      }
+      if (requestCase_ == 2) {
+        if (transferReceiptBuilder_ == null) {
+          result.request_ = request_;
+        } else {
+          result.request_ = transferReceiptBuilder_.build();
+        }
       }
       result.forwardToId_ = forwardToId_;
+      result.requestCase_ = requestCase_;
       onBuilt();
       return result;
     }
@@ -427,12 +542,22 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(io.grpc.bverify.ForwardRequest other) {
       if (other == io.grpc.bverify.ForwardRequest.getDefaultInstance()) return this;
-      if (other.hasRequest()) {
-        mergeRequest(other.getRequest());
-      }
       if (!other.getForwardToId().isEmpty()) {
         forwardToId_ = other.forwardToId_;
         onChanged();
+      }
+      switch (other.getRequestCase()) {
+        case ISSUE_RECEIPT: {
+          mergeIssueReceipt(other.getIssueReceipt());
+          break;
+        }
+        case TRANSFER_RECEIPT: {
+          mergeTransferReceipt(other.getTransferReceipt());
+          break;
+        }
+        case REQUEST_NOT_SET: {
+          break;
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -460,127 +585,297 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int requestCase_ = 0;
+    private java.lang.Object request_;
+    public RequestCase
+        getRequestCase() {
+      return RequestCase.forNumber(
+          requestCase_);
+    }
 
-    private io.grpc.bverify.IssueReceiptRequest request_ = null;
+    public Builder clearRequest() {
+      requestCase_ = 0;
+      request_ = null;
+      onChanged();
+      return this;
+    }
+
+
     private com.google.protobuf.SingleFieldBuilderV3<
-        io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder> requestBuilder_;
+        io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder> issueReceiptBuilder_;
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public boolean hasRequest() {
-      return requestBuilder_ != null || request_ != null;
+    public boolean hasIssueReceipt() {
+      return requestCase_ == 1;
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public io.grpc.bverify.IssueReceiptRequest getRequest() {
-      if (requestBuilder_ == null) {
-        return request_ == null ? io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
+    public io.grpc.bverify.IssueReceiptRequest getIssueReceipt() {
+      if (issueReceiptBuilder_ == null) {
+        if (requestCase_ == 1) {
+          return (io.grpc.bverify.IssueReceiptRequest) request_;
+        }
+        return io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
       } else {
-        return requestBuilder_.getMessage();
+        if (requestCase_ == 1) {
+          return issueReceiptBuilder_.getMessage();
+        }
+        return io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
       }
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public Builder setRequest(io.grpc.bverify.IssueReceiptRequest value) {
-      if (requestBuilder_ == null) {
+    public Builder setIssueReceipt(io.grpc.bverify.IssueReceiptRequest value) {
+      if (issueReceiptBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
         request_ = value;
         onChanged();
       } else {
-        requestBuilder_.setMessage(value);
+        issueReceiptBuilder_.setMessage(value);
       }
-
+      requestCase_ = 1;
       return this;
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public Builder setRequest(
+    public Builder setIssueReceipt(
         io.grpc.bverify.IssueReceiptRequest.Builder builderForValue) {
-      if (requestBuilder_ == null) {
+      if (issueReceiptBuilder_ == null) {
         request_ = builderForValue.build();
         onChanged();
       } else {
-        requestBuilder_.setMessage(builderForValue.build());
+        issueReceiptBuilder_.setMessage(builderForValue.build());
       }
-
+      requestCase_ = 1;
       return this;
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public Builder mergeRequest(io.grpc.bverify.IssueReceiptRequest value) {
-      if (requestBuilder_ == null) {
-        if (request_ != null) {
-          request_ =
-            io.grpc.bverify.IssueReceiptRequest.newBuilder(request_).mergeFrom(value).buildPartial();
+    public Builder mergeIssueReceipt(io.grpc.bverify.IssueReceiptRequest value) {
+      if (issueReceiptBuilder_ == null) {
+        if (requestCase_ == 1 &&
+            request_ != io.grpc.bverify.IssueReceiptRequest.getDefaultInstance()) {
+          request_ = io.grpc.bverify.IssueReceiptRequest.newBuilder((io.grpc.bverify.IssueReceiptRequest) request_)
+              .mergeFrom(value).buildPartial();
         } else {
           request_ = value;
         }
         onChanged();
       } else {
-        requestBuilder_.mergeFrom(value);
+        if (requestCase_ == 1) {
+          issueReceiptBuilder_.mergeFrom(value);
+        }
+        issueReceiptBuilder_.setMessage(value);
       }
-
+      requestCase_ = 1;
       return this;
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public Builder clearRequest() {
-      if (requestBuilder_ == null) {
-        request_ = null;
-        onChanged();
+    public Builder clearIssueReceipt() {
+      if (issueReceiptBuilder_ == null) {
+        if (requestCase_ == 1) {
+          requestCase_ = 0;
+          request_ = null;
+          onChanged();
+        }
       } else {
-        request_ = null;
-        requestBuilder_ = null;
+        if (requestCase_ == 1) {
+          requestCase_ = 0;
+          request_ = null;
+        }
+        issueReceiptBuilder_.clear();
       }
-
       return this;
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public io.grpc.bverify.IssueReceiptRequest.Builder getRequestBuilder() {
-      
-      onChanged();
-      return getRequestFieldBuilder().getBuilder();
+    public io.grpc.bverify.IssueReceiptRequest.Builder getIssueReceiptBuilder() {
+      return getIssueReceiptFieldBuilder().getBuilder();
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
-    public io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder() {
-      if (requestBuilder_ != null) {
-        return requestBuilder_.getMessageOrBuilder();
+    public io.grpc.bverify.IssueReceiptRequestOrBuilder getIssueReceiptOrBuilder() {
+      if ((requestCase_ == 1) && (issueReceiptBuilder_ != null)) {
+        return issueReceiptBuilder_.getMessageOrBuilder();
       } else {
-        return request_ == null ?
-            io.grpc.bverify.IssueReceiptRequest.getDefaultInstance() : request_;
+        if (requestCase_ == 1) {
+          return (io.grpc.bverify.IssueReceiptRequest) request_;
+        }
+        return io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
       }
     }
     /**
-     * <code>.api.IssueReceiptRequest request = 1;</code>
+     * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder> 
-        getRequestFieldBuilder() {
-      if (requestBuilder_ == null) {
-        requestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        getIssueReceiptFieldBuilder() {
+      if (issueReceiptBuilder_ == null) {
+        if (!(requestCase_ == 1)) {
+          request_ = io.grpc.bverify.IssueReceiptRequest.getDefaultInstance();
+        }
+        issueReceiptBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             io.grpc.bverify.IssueReceiptRequest, io.grpc.bverify.IssueReceiptRequest.Builder, io.grpc.bverify.IssueReceiptRequestOrBuilder>(
-                getRequest(),
+                (io.grpc.bverify.IssueReceiptRequest) request_,
                 getParentForChildren(),
                 isClean());
         request_ = null;
       }
-      return requestBuilder_;
+      requestCase_ = 1;
+      onChanged();;
+      return issueReceiptBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.grpc.bverify.TransferReceiptRequest, io.grpc.bverify.TransferReceiptRequest.Builder, io.grpc.bverify.TransferReceiptRequestOrBuilder> transferReceiptBuilder_;
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public boolean hasTransferReceipt() {
+      return requestCase_ == 2;
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public io.grpc.bverify.TransferReceiptRequest getTransferReceipt() {
+      if (transferReceiptBuilder_ == null) {
+        if (requestCase_ == 2) {
+          return (io.grpc.bverify.TransferReceiptRequest) request_;
+        }
+        return io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+      } else {
+        if (requestCase_ == 2) {
+          return transferReceiptBuilder_.getMessage();
+        }
+        return io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public Builder setTransferReceipt(io.grpc.bverify.TransferReceiptRequest value) {
+      if (transferReceiptBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        request_ = value;
+        onChanged();
+      } else {
+        transferReceiptBuilder_.setMessage(value);
+      }
+      requestCase_ = 2;
+      return this;
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public Builder setTransferReceipt(
+        io.grpc.bverify.TransferReceiptRequest.Builder builderForValue) {
+      if (transferReceiptBuilder_ == null) {
+        request_ = builderForValue.build();
+        onChanged();
+      } else {
+        transferReceiptBuilder_.setMessage(builderForValue.build());
+      }
+      requestCase_ = 2;
+      return this;
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public Builder mergeTransferReceipt(io.grpc.bverify.TransferReceiptRequest value) {
+      if (transferReceiptBuilder_ == null) {
+        if (requestCase_ == 2 &&
+            request_ != io.grpc.bverify.TransferReceiptRequest.getDefaultInstance()) {
+          request_ = io.grpc.bverify.TransferReceiptRequest.newBuilder((io.grpc.bverify.TransferReceiptRequest) request_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          request_ = value;
+        }
+        onChanged();
+      } else {
+        if (requestCase_ == 2) {
+          transferReceiptBuilder_.mergeFrom(value);
+        }
+        transferReceiptBuilder_.setMessage(value);
+      }
+      requestCase_ = 2;
+      return this;
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public Builder clearTransferReceipt() {
+      if (transferReceiptBuilder_ == null) {
+        if (requestCase_ == 2) {
+          requestCase_ = 0;
+          request_ = null;
+          onChanged();
+        }
+      } else {
+        if (requestCase_ == 2) {
+          requestCase_ = 0;
+          request_ = null;
+        }
+        transferReceiptBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public io.grpc.bverify.TransferReceiptRequest.Builder getTransferReceiptBuilder() {
+      return getTransferReceiptFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    public io.grpc.bverify.TransferReceiptRequestOrBuilder getTransferReceiptOrBuilder() {
+      if ((requestCase_ == 2) && (transferReceiptBuilder_ != null)) {
+        return transferReceiptBuilder_.getMessageOrBuilder();
+      } else {
+        if (requestCase_ == 2) {
+          return (io.grpc.bverify.TransferReceiptRequest) request_;
+        }
+        return io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.grpc.bverify.TransferReceiptRequest, io.grpc.bverify.TransferReceiptRequest.Builder, io.grpc.bverify.TransferReceiptRequestOrBuilder> 
+        getTransferReceiptFieldBuilder() {
+      if (transferReceiptBuilder_ == null) {
+        if (!(requestCase_ == 2)) {
+          request_ = io.grpc.bverify.TransferReceiptRequest.getDefaultInstance();
+        }
+        transferReceiptBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.grpc.bverify.TransferReceiptRequest, io.grpc.bverify.TransferReceiptRequest.Builder, io.grpc.bverify.TransferReceiptRequestOrBuilder>(
+                (io.grpc.bverify.TransferReceiptRequest) request_,
+                getParentForChildren(),
+                isClean());
+        request_ = null;
+      }
+      requestCase_ = 2;
+      onChanged();;
+      return transferReceiptBuilder_;
     }
 
     private java.lang.Object forwardToId_ = "";
     /**
-     * <code>string forward_to_id = 2;</code>
+     * <code>string forward_to_id = 3;</code>
      */
     public java.lang.String getForwardToId() {
       java.lang.Object ref = forwardToId_;
@@ -595,7 +890,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string forward_to_id = 2;</code>
+     * <code>string forward_to_id = 3;</code>
      */
     public com.google.protobuf.ByteString
         getForwardToIdBytes() {
@@ -611,7 +906,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string forward_to_id = 2;</code>
+     * <code>string forward_to_id = 3;</code>
      */
     public Builder setForwardToId(
         java.lang.String value) {
@@ -624,7 +919,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string forward_to_id = 2;</code>
+     * <code>string forward_to_id = 3;</code>
      */
     public Builder clearForwardToId() {
       
@@ -633,7 +928,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string forward_to_id = 2;</code>
+     * <code>string forward_to_id = 3;</code>
      */
     public Builder setForwardToIdBytes(
         com.google.protobuf.ByteString value) {

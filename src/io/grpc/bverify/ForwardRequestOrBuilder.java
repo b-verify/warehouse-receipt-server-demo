@@ -8,25 +8,40 @@ public interface ForwardRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
    */
-  boolean hasRequest();
+  boolean hasIssueReceipt();
   /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
    */
-  io.grpc.bverify.IssueReceiptRequest getRequest();
+  io.grpc.bverify.IssueReceiptRequest getIssueReceipt();
   /**
-   * <code>.api.IssueReceiptRequest request = 1;</code>
+   * <code>.api.IssueReceiptRequest issue_receipt = 1;</code>
    */
-  io.grpc.bverify.IssueReceiptRequestOrBuilder getRequestOrBuilder();
+  io.grpc.bverify.IssueReceiptRequestOrBuilder getIssueReceiptOrBuilder();
 
   /**
-   * <code>string forward_to_id = 2;</code>
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  boolean hasTransferReceipt();
+  /**
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  io.grpc.bverify.TransferReceiptRequest getTransferReceipt();
+  /**
+   * <code>.api.TransferReceiptRequest transfer_receipt = 2;</code>
+   */
+  io.grpc.bverify.TransferReceiptRequestOrBuilder getTransferReceiptOrBuilder();
+
+  /**
+   * <code>string forward_to_id = 3;</code>
    */
   java.lang.String getForwardToId();
   /**
-   * <code>string forward_to_id = 2;</code>
+   * <code>string forward_to_id = 3;</code>
    */
   com.google.protobuf.ByteString
       getForwardToIdBytes();
+
+  public io.grpc.bverify.ForwardRequest.RequestCase getRequestCase();
 }

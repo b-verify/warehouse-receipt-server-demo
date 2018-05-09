@@ -160,20 +160,7 @@ public class BootstrapMockSetup {
 	
 	public static void main(String[] args) {
 		// runs the bootstrap to setup the mock data
-		// String base = "/home/henryaspegren/Documents/Dropbox (MIT)/Academics/MIT/DCI/Project_Code/b_verify-server-demo/demos/";
-		// BootstrapMockSetup.bootstrapSimpleDemo(base);
 		String base = System.getProperty("user.dir")  + "/demos/";
-		PKIDirectory pki = new PKIDirectory(base+"pki/");
-		for(Account a : pki.getAllAccounts()) {
-			File f = new File(base+a.getFirstName());
-			writeBytesToFile(f, a.serialize().toByteArray());
-		}
-		for(Account a : pki.getAllAccounts()) {
-			File f = new File(base+a.getFirstName());
-			byte[] fromFile = readBytesFromFile(f);
-			Account acc = Account.fromBytes(fromFile);
-			
-			System.out.println(acc);
-		}
+		BootstrapMockSetup.bootstrapSimpleDemo(base);
 	}
 }
