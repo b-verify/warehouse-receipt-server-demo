@@ -1,10 +1,6 @@
 package pki;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -18,6 +14,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import crpyto.CryptographicSignature;
+import demo.BootstrapMockSetup;
 
 public class Account implements Serializable, Comparable<Account> {
 	
@@ -63,7 +60,7 @@ public class Account implements Serializable, Comparable<Account> {
 	}
 	
 	public Set<byte[]> getADSKeys(){
-		return this.adsKeys;
+		return new HashSet<>(this.adsKeys);
 	}
 	
 	public String getFirstName() {
@@ -93,47 +90,17 @@ public class Account implements Serializable, Comparable<Account> {
 	public String getIdAsString() {
 		return id.toString();
 	}
-	
+		
 	public void saveToFile(String dir) {
-		try {
-			File f = new File(dir+id.toString());
-			FileOutputStream fout = new FileOutputStream(f);
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			oos.writeObject(this);
-			oos.close();
-			fout.close();
-		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+		File f = new File(dir+id.toString());
+		byte[] asBytes = this.serialize().toByteArray();
+		BootstrapMockSetup.writeBytesToFile(f, asBytes);
 	}
 	
-	public static Account loadFromFile(String file) {
-		try {
-			File f = new File(file);
-			FileInputStream fin = new FileInputStream(f);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			Object obj = ois.readObject();
-			ois.close();
-			fin.close();
-			Account account = (Account) obj;
-			return account;
-		}catch(Exception e) {
-			return null;
-		}	
-	}
-	
-	public static Account loafFromFile(File f) {
-		try {
-			FileInputStream fin = new FileInputStream(f);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			Object obj = ois.readObject();
-			ois.close();
-			fin.close();
-			Account account = (Account) obj;
-			return account;
-		}catch(Exception e) {
-			return null;
-		}	
+	public static Account loadFromFile(File f) {
+		byte[] asBytes = BootstrapMockSetup.readBytesFromFile(f);
+		Account a = Account.fromBytes(asBytes);
+		return a;
 	}
 	
 	public serialization.generated.MptSerialization.Account serialize(){

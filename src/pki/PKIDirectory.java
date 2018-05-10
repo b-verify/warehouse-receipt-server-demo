@@ -34,7 +34,7 @@ public class PKIDirectory {
 		File[] listOfFiles = folder.listFiles();
 		for(File f : listOfFiles) {
 			if(f.isFile()) {
-				Account a = Account.loafFromFile(f);
+				Account a = Account.loadFromFile(f);
 				if(a != null) {
 					this.uuids.add(a.getId());
 					this.lookupTable.put(a.getId(), a);

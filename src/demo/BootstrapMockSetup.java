@@ -17,7 +17,6 @@ import crpyto.CryptographicUtils;
 import mpt.core.Utils;
 import mpt.set.MPTSetFull;
 import pki.Account;
-import pki.PKIDirectory;
 import io.grpc.bverify.Receipt;
 
 /**
@@ -102,15 +101,15 @@ public class BootstrapMockSetup {
 		rec.setWarehouseId(issuer.getIdAsString());
 		rec.setDepositorId(recepient.getIdAsString());
 		rec.setAccountant(FAKER.name().name());
-		rec.setCategory(FAKER.yoda().quote());
+		rec.setCategory("wheat");
 		Date now = new Date();
 		rec.setDate(now.toString());
-		rec.setInsurance("");
+		rec.setInsurance("full coverage");
 		rec.setWeight(FAKER.number().randomDouble(2, 0, 1000));
 		rec.setVolume(FAKER.number().randomDouble(2, 0, 1000));
 		rec.setHumidity(FAKER.number().randomDouble(3, 0, 1));
 		rec.setPrice(FAKER.number().randomDouble(2, 1000, 10000));
-		rec.setDetails(""+FAKER.number().randomNumber());
+		rec.setDetails("N/A");
 		return rec.build();
 	}
 	
