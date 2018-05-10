@@ -267,27 +267,29 @@ public class MockDepositor implements Runnable {
 	}
 
 	private void transferReceipt(Account recepient) {
-		Receipt toTransfer = null;
 		if(this.adsData.size() == 0) {
 			logger.log(Level.WARNING, "...no receipts remaining!");
 			return;
 		}
 		for(Receipt r : this.adsData) {
-			toTransfer = r;
-			break;
+			this.transferReceipt(recepient, r);
+			return;
 		}
-		logger.log(Level.INFO, "...transferring receipt: "+toTransfer+" -> "+recepient);
+	}
+	
+	private void transferReceipt(Account recepient, Receipt receipt) {
+		logger.log(Level.INFO, "...transferring receipt: "+receipt+" -> "+recepient);
 		TransferReceiptRequest request = TransferReceiptRequest.newBuilder()
-				.setReceipt(toTransfer)
+				.setReceipt(receipt)
 				.setCurrentOwnerId(this.account.getIdAsString())
 				.setNewOwnerId(recepient.getIdAsString())
 				.build();
 		request = this.approveTransferRequestAndApply(request);
 		ForwardRequest forward = ForwardRequest.newBuilder()
 				.setTransferReceipt(request)
-				.setForwardToId(toTransfer.getWarehouseId())
+				.setForwardToId(receipt.getWarehouseId())
 				.build();
-		logger.log(Level.INFO, "...forwarding to: "+toTransfer.getWarehouseId());
+		logger.log(Level.INFO, "...forwarding to: "+receipt.getWarehouseId());
 		this.blockingStub.forward(forward);
 	}
 	
